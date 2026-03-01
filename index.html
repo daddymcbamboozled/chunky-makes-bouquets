@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloom Builder — Make a Bouquet</title>
+
+<!-- ═══════════════════════════════════════════════
+     THEME — swap this file to change the entire look
+     ═══════════════════════════════════════════════ -->
+<link rel="stylesheet" href="theme.css">
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header>
+  <div class="header-stamp">✿</div>
+  <div class="header-text">
+    <h1><span class="accent">Bloom</span> Builder</h1>
+    <p>mix flowers · learn their meanings · share the bouquet</p>
+  </div>
+  <div class="header-tape"></div>
+</header>
+
+<!-- ═══════════════════ THREE-COLUMN LAYOUT ═══════════════════ -->
+<div class="app-layout">
+
+  <!-- ─── LEFT PANEL: Flower & Ribbon Palette ─── -->
+  <aside class="panel" id="left-panel">
+    <div class="panel-title">✂ The Stash</div>
+    <div class="panel-inner">
+
+      <div class="section-label">Flowers</div>
+      <div class="flower-grid" id="flower-palette"></div>
+
+      <div class="section-label">Ribbons &amp; Wraps</div>
+      <div class="flower-grid" id="ribbon-palette"></div>
+
+      <div class="section-label">Custom</div>
+      <div class="upload-zone" id="upload-trigger">
+        <span class="upload-icon">📎</span>
+        <p>Drop PNG / JPG / SVG here<br>or click to add your own</p>
+      </div>
+      <input type="file" id="file-input" accept="image/png,image/jpeg,image/svg+xml" multiple style="display:none">
+      <p class="upload-note">You can add a name, meaning, and tags to any custom image.</p>
+
+    </div>
+  </aside>
+
+  <!-- ─── CENTER: Canvas ─── -->
+  <main class="canvas-wrapper">
+
+    <div class="canvas-topbar">
+      <input
+        class="bouquet-name-input"
+        type="text"
+        id="bouquet-name"
+        placeholder="name your bouquet..."
+        maxlength="60"
+        aria-label="Bouquet name"
+      >
+      <button class="btn btn-primary" onclick="openCardModal()">✦ View Card</button>
+    </div>
+
+    <div id="canvas-container" aria-label="Bouquet canvas">
+      <div class="canvas-hint" id="canvas-hint">
+        <span class="big-icon">✎</span>
+        <span>Click a flower on the left,<br>or drag it onto the canvas.</span>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-bar">
+      <div class="ctrl-group">
+        <span>Size</span>
+        <input type="range" id="size-slider" min="30" max="200" value="80" aria-label="Size">
+        <span id="size-label">80</span>
+      </div>
+      <div class="ctrl-divider"></div>
+      <div class="ctrl-group">
+        <span>Rotate</span>
+        <input type="range" id="rotate-slider" min="0" max="360" value="0" aria-label="Rotate">
+        <input type="number" id="rotate-num" min="0" max="360" value="0" aria-label="Rotate degrees">°
+      </div>
+      <div class="ctrl-divider"></div>
+      <div class="ctrl-group">
+        Selected: <span id="selected-label" style="color:var(--accent); margin-left:3px;">none</span>
+      </div>
+    </div>
+
+    <div class="canvas-actions">
+      <button class="btn btn-sm" onclick="deleteSelected()">🗑 Delete</button>
+      <button class="btn btn-sm" onclick="clearCanvas()">Clear All</button>
+      <button class="btn btn-sm" onclick="bringForward()">↑ Forward</button>
+      <button class="btn btn-sm" onclick="sendBack()">↓ Back</button>
+      <button class="btn btn-sm btn-red" onclick="saveCanvasImage()">💾 Save Image</button>
+    </div>
+
+  </main>
+
+  <!-- ─── RIGHT PANEL: Meanings ─── -->
+  <aside class="panel panel-right">
+    <div class="panel-title">📖 Meanings</div>
+    <div class="panel-inner" id="meaning-list">
+      <div class="empty-panel">
+        Add flowers to see<br>what they symbolize.<br><br>
+        Every one has a story.
+      </div>
+    </div>
+  </aside>
+
+</div><!-- /app-layout -->
+
+
+<!-- ═══════════════════ UPLOAD MODAL ═══════════════════ -->
+<div class="modal-overlay" id="upload-modal" role="dialog" aria-modal="true" aria-label="Add custom flower">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeUploadModal()" aria-label="Close">×</button>
+    <h2>Add Custom Item</h2>
+
+    <div class="form-group">
+      <label>Image</label>
+      <div class="file-drop" id="file-drop-zone" role="button" tabindex="0" aria-label="Choose image file">
+        <span style="font-size:1.6rem;">🖼</span>
+        <p style="font-size:0.8rem;margin-top:0.3rem;">Click or drop image here</p>
+        <img class="preview-img" id="upload-preview" style="display:none" alt="Upload preview">
+      </div>
+      <input type="file" id="modal-file-input" accept="image/png,image/jpeg,image/svg+xml" style="display:none">
+    </div>
+
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" id="custom-name" placeholder="e.g. Blue Iris" maxlength="40">
+    </div>
+
+    <div class="form-group">
+      <label>Meaning / Description</label>
+      <textarea id="custom-meaning" rows="3" placeholder="What does this flower mean? Look up its traditional symbolism, or write your own."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Tags <span style="opacity:0.5;font-size:0.68rem;">(comma-separated: love, hope, memory…)</span></label>
+      <input type="text" id="custom-tags" placeholder="love, hope, memory">
+    </div>
+
+    <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:0.75rem;">
+      <button class="btn btn-sm" onclick="closeUploadModal()">Cancel</button>
+      <button class="btn btn-sm btn-primary" onclick="confirmUpload()">Add to Stash ✓</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════ CARD MODAL ═══════════════════ -->
+<div class="modal-overlay" id="card-modal" role="dialog" aria-modal="true" aria-label="Bouquet card">
+  <div class="card-inner" id="card-inner">
+    <div class="card-header">
+      <div class="stamp-row">✿ ✂ ✿</div>
+      <div class="card-title" id="card-title">My Bouquet</div>
+      <div class="card-subtitle">a handmade arrangement</div>
+    </div>
+    <div class="card-body" id="card-body"></div>
+    <div class="card-footer">made with bloom builder</div>
+    <div class="card-actions">
+      <button class="btn btn-sm btn-red" onclick="saveCardImage()">💾 Save Card</button>
+      <button class="btn btn-sm" onclick="closeCardModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     DATA — swap this file to change flowers/ribbons
+     ═══════════════════════════════════════════════ -->
+<script src="data.js"></script>
+
+<!-- ═══════════════════════════════════════════════
+     APP LOGIC — edit below for functionality changes
+     ═══════════════════════════════════════════════ -->
+<script>
+// ════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════
+let items        = [];     // all placed items on canvas
+let customItems  = [];     // user-uploaded items
+let selectedUUID = null;
+let dragState    = null;   // active drag: { uuid, ox, oy }
+let maxZ         = 10;
+let pendingUploadDataURL = null;
+
+const canvas = document.getElementById('canvas-container');
+
+// ════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════
+function getAllData() {
+  return [...FLOWERS, ...RIBBONS, ...customItems];
+}
+
+function getItemEl(uuid) {
+  return canvas.querySelector(`[data-uuid="${uuid}"]`);
+}
+
+function uid() {
+  return (crypto.randomUUID
+    ? crypto.randomUUID()
+    : Math.random().toString(36).slice(2) + Date.now().toString(36));
+}
+
+// ════════════════════════════════════════
+//  BUILD PALETTE
+// ════════════════════════════════════════
+function buildPalette() {
+  buildPaletteSection(FLOWERS, 'flower-palette', false);
+  buildPaletteSection(RIBBONS, 'ribbon-palette', true);
+}
+
+function buildPaletteSection(dataArr, containerId, isRibbon) {
+  const container = document.getElementById(containerId);
+  dataArr.forEach(d => container.appendChild(makeTile(d, isRibbon)));
+}
+
+function makeTile(data, isRibbon = false) {
+  const tile = document.createElement('div');
+  tile.className = isRibbon ? 'ribbon-tile' : 'flower-tile';
+  tile.draggable = true;
+  tile.dataset.id = data.id;
+  tile.setAttribute('title', data.name);
+  tile.setAttribute('aria-label', data.name);
+  tile.setAttribute('role', 'button');
+  tile.setAttribute('tabindex', '0');
+
+  const media = data.imgUrl
+    ? `<img src="${data.imgUrl}" style="width:50px;height:50px;object-fit:contain;display:block;margin:0 auto 3px;" alt="${data.name}">`
+    : (data.svg || '');
+
+  tile.innerHTML = media + `<div class="fname">${data.name}</div>`;
+
+  tile.addEventListener('click', () => placeItem(data));
+  tile.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') placeItem(data); });
+  tile.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('itemId', data.id);
+    e.dataTransfer.effectAllowed = 'copy';
+  });
+
+  return tile;
+}
+
+// ════════════════════════════════════════
+//  PLACE ITEM ON CANVAS
+// ════════════════════════════════════════
+function placeItem(data, x, y) {
+  const size = parseInt(document.getElementById('size-slider').value) || 80;
+  if (x === undefined) {
+    // Random-ish center placement so multiple drops don't stack exactly
+    x = canvas.offsetWidth  / 2 - size / 2 + (Math.random() - 0.5) * 80;
+    y = canvas.offsetHeight / 2 - size / 2 + (Math.random() - 0.5) * 80;
+  }
+  const rec = { uuid: uid(), data, x, y, size, rotation: 0, zIndex: ++maxZ };
+  items.push(rec);
+  renderItem(rec);
+  selectItem(rec.uuid);
+  updateHint();
+  updateMeanings();
+}
+
+function renderItem(rec) {
+  const el = document.createElement('div');
+  el.className = 'placed-item';
+  el.dataset.uuid = rec.uuid;
+  el.tabIndex = 0;
+  el.setAttribute('aria-label', rec.data.name);
+  applyItemStyle(el, rec);
+  setItemContent(el, rec);
+
+  el.addEventListener('mousedown',  onItemMousedown);
+  el.addEventListener('touchstart', onItemTouchstart, { passive: false });
+  el.addEventListener('click',      e => { e.stopPropagation(); selectItem(rec.uuid); });
+  el.addEventListener('keydown',    e => {
+    if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); deleteSelected(); }
+  });
+
+  canvas.appendChild(el);
+
+  // Animate in
+  el.style.opacity = '0';
+  requestAnimationFrame(() => {
+    el.style.transition = 'opacity 0.18s';
+    el.style.opacity = '1';
+    setTimeout(() => { el.style.transition = ''; }, 200);
+  });
+}
+
+function applyItemStyle(el, rec) {
+  el.style.left      = rec.x + 'px';
+  el.style.top       = rec.y + 'px';
+  el.style.width     = rec.size + 'px';
+  el.style.height    = rec.size + 'px';
+  el.style.zIndex    = rec.zIndex;
+  el.style.transform = `rotate(${rec.rotation}deg)`;
+}
+
+function setItemContent(el, rec) {
+  // Remove old content but keep the selection ring if present
+  const ring = el.querySelector('.selected-ring');
+  if (rec.data.imgUrl) {
+    el.innerHTML = `<img src="${rec.data.imgUrl}"
+      style="width:${rec.size}px;height:${rec.size}px;object-fit:contain;display:block;pointer-events:none;"
+      alt="${rec.data.name}">`;
+  } else {
+    el.innerHTML = rec.data.svg || '';
+    const svgEl = el.querySelector('svg');
+    if (svgEl) {
+      svgEl.setAttribute('width',  rec.size);
+      svgEl.setAttribute('height', rec.size);
+    }
+  }
+  if (ring) el.appendChild(ring);
+}
+
+// ════════════════════════════════════════
+//  SELECTION
+// ════════════════════════════════════════
+function selectItem(uuid) {
+  // Remove previous selection ring
+  canvas.querySelectorAll('.selected-ring').forEach(r => r.remove());
+  selectedUUID = uuid;
+
+  const rec = items.find(i => i.uuid === uuid);
+  const label = document.getElementById('selected-label');
+
+  if (!rec) { label.textContent = 'none'; return; }
+
+  label.textContent = rec.data.name;
+
+  // Sync controls to selected item
+  document.getElementById('size-slider').value   = rec.size;
+  document.getElementById('size-label').textContent = rec.size;
+  document.getElementById('rotate-slider').value = rec.rotation;
+  document.getElementById('rotate-num').value    = rec.rotation;
+
+  // Add selection ring
+  const el = getItemEl(uuid);
+  if (el) {
+    const ring = document.createElement('div');
+    ring.className = 'selected-ring';
+    el.appendChild(ring);
+    el.focus();
+  }
+}
+
+// Click on canvas background deselects
+canvas.addEventListener('click', e => {
+  if (e.target === canvas || e.target.classList.contains('canvas-hint') || e.target === document.getElementById('canvas-hint')) {
+    canvas.querySelectorAll('.selected-ring').forEach(r => r.remove());
+    selectedUUID = null;
+    document.getElementById('selected-label').textContent = 'none';
+  }
+});
+
+// ════════════════════════════════════════
+//  DRAG FROM PALETTE (HTML drag API)
+// ════════════════════════════════════════
+canvas.addEventListener('dragover', e => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'copy';
+});
+
+canvas.addEventListener('drop', e => {
+  e.preventDefault();
+  const id   = e.dataTransfer.getData('itemId');
+  const data = getAllData().find(d => d.id === id);
+  if (!data) return;
+  const rect = canvas.getBoundingClientRect();
+  const size = parseInt(document.getElementById('size-slider').value) || 80;
+  placeItem(data, e.clientX - rect.left - size / 2, e.clientY - rect.top - size / 2);
+});
+
+// ════════════════════════════════════════
+//  MOVE DRAG (mouse)
+// ════════════════════════════════════════
+function onItemMousedown(e) {
+  if (e.button !== 0) return;
+  e.preventDefault();
+  e.stopPropagation();
+
+  const el   = e.currentTarget;
+  const uuid = el.dataset.uuid;
+  selectItem(uuid);
+
+  const rec = items.find(i => i.uuid === uuid);
+  const cr  = canvas.getBoundingClientRect();
+  const er  = el.getBoundingClientRect();
+
+  dragState = {
+    uuid,
+    ox: e.clientX - cr.left - rec.x,
+    oy: e.clientY - cr.top  - rec.y
+  };
+
+  el.style.cursor = 'grabbing';
+}
+
+document.addEventListener('mousemove', e => {
+  if (!dragState) return;
+  const rec = items.find(i => i.uuid === dragState.uuid);
+  if (!rec) return;
+  const cr = canvas.getBoundingClientRect();
+  rec.x = e.clientX - cr.left - dragState.ox;
+  rec.y = e.clientY - cr.top  - dragState.oy;
+  const el = getItemEl(dragState.uuid);
+  if (el) { el.style.left = rec.x + 'px'; el.style.top = rec.y + 'px'; }
+});
+
+document.addEventListener('mouseup', () => {
+  if (!dragState) return;
+  const el = getItemEl(dragState.uuid);
+  if (el) el.style.cursor = 'move';
+  dragState = null;
+});
+
+// ════════════════════════════════════════
+//  MOVE DRAG (touch)
+// ════════════════════════════════════════
+function onItemTouchstart(e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const el    = e.currentTarget;
+  const uuid  = el.dataset.uuid;
+  selectItem(uuid);
+
+  const rec   = items.find(i => i.uuid === uuid);
+  const touch = e.touches[0];
+  const cr    = canvas.getBoundingClientRect();
+  const er    = el.getBoundingClientRect();
+
+  dragState = {
+    uuid,
+    ox: touch.clientX - cr.left - rec.x,
+    oy: touch.clientY - cr.top  - rec.y
+  };
+}
+
+document.addEventListener('touchmove', e => {
+  if (!dragState) return;
+  e.preventDefault();
+  const touch = e.touches[0];
+  const rec   = items.find(i => i.uuid === dragState.uuid);
+  if (!rec) return;
+  const cr = canvas.getBoundingClientRect();
+  rec.x = touch.clientX - cr.left - dragState.ox;
+  rec.y = touch.clientY - cr.top  - dragState.oy;
+  const el = getItemEl(dragState.uuid);
+  if (el) { el.style.left = rec.x + 'px'; el.style.top = rec.y + 'px'; }
+}, { passive: false });
+
+document.addEventListener('touchend', () => { dragState = null; });
+
+// ════════════════════════════════════════
+//  SIZE CONTROL
+// ════════════════════════════════════════
+document.getElementById('size-slider').addEventListener('input', function () {
+  document.getElementById('size-label').textContent = this.value;
+  applySize(parseInt(this.value));
+});
+
+function applySize(val) {
+  if (!selectedUUID) return;
+  const rec = items.find(i => i.uuid === selectedUUID);
+  if (!rec) return;
+  rec.size = val;
+  const el = getItemEl(selectedUUID);
+  if (!el) return;
+  el.style.width  = val + 'px';
+  el.style.height = val + 'px';
+  setItemContent(el, rec);
+}
+
+// ════════════════════════════════════════
+//  ROTATION CONTROL
+// ════════════════════════════════════════
+document.getElementById('rotate-slider').addEventListener('input', function () {
+  document.getElementById('rotate-num').value = this.value;
+  applyRotation(parseInt(this.value));
+});
+
+document.getElementById('rotate-num').addEventListener('input', function () {
+  const v = Math.max(0, Math.min(360, parseInt(this.value) || 0));
+  document.getElementById('rotate-slider').value = v;
+  applyRotation(v);
+});
+
+function applyRotation(deg) {
+  if (!selectedUUID) return;
+  const rec = items.find(i => i.uuid === selectedUUID);
+  if (!rec) return;
+  rec.rotation = deg;
+  const el = getItemEl(selectedUUID);
+  if (el) el.style.transform = `rotate(${deg}deg)`;
+}
+
+// ════════════════════════════════════════
+//  DELETE / CLEAR / Z-ORDER
+// ════════════════════════════════════════
+function deleteSelected() {
+  if (!selectedUUID) return;
+  items = items.filter(i => i.uuid !== selectedUUID);
+  const el = getItemEl(selectedUUID);
+  if (el) el.remove();
+  selectedUUID = null;
+  document.getElementById('selected-label').textContent = 'none';
+  updateHint();
+  updateMeanings();
+}
+
+function clearCanvas() {
+  if (items.length === 0) return;
+  if (!confirm('Clear everything on the canvas?')) return;
+  items = [];
+  canvas.querySelectorAll('.placed-item').forEach(el => el.remove());
+  selectedUUID = null;
+  document.getElementById('selected-label').textContent = 'none';
+  updateHint();
+  updateMeanings();
+}
+
+function bringForward() {
+  if (!selectedUUID) return;
+  const rec = items.find(i => i.uuid === selectedUUID);
+  if (!rec) return;
+  rec.zIndex = ++maxZ;
+  const el = getItemEl(selectedUUID);
+  if (el) el.style.zIndex = rec.zIndex;
+}
+
+function sendBack() {
+  if (!selectedUUID) return;
+  const rec = items.find(i => i.uuid === selectedUUID);
+  if (!rec) return;
+  rec.zIndex = Math.max(1, rec.zIndex - 2);
+  const el = getItemEl(selectedUUID);
+  if (el) el.style.zIndex = rec.zIndex;
+}
+
+// ════════════════════════════════════════
+//  KEYBOARD SHORTCUTS
+// ════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  // Don't intercept when typing in inputs
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  if ((e.key === 'Delete' || e.key === 'Backspace') && selectedUUID) {
+    e.preventDefault();
+    deleteSelected();
+  }
+  // Arrow nudge (1px, or 10px with shift)
+  const step = e.shiftKey ? 10 : 1;
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); nudge(-step, 0); }
+  if (e.key === 'ArrowRight') { e.preventDefault(); nudge( step, 0); }
+  if (e.key === 'ArrowUp')    { e.preventDefault(); nudge(0, -step); }
+  if (e.key === 'ArrowDown')  { e.preventDefault(); nudge(0,  step); }
+  // Rotation shortcuts
+  if (e.key === '[') applyRotationDelta(-5);
+  if (e.key === ']') applyRotationDelta(5);
+});
+
+function nudge(dx, dy) {
+  const rec = items.find(i => i.uuid === selectedUUID);
+  if (!rec) return;
+  rec.x += dx; rec.y += dy;
+  const el = getItemEl(selectedUUID);
+  if (el) { el.style.left = rec.x + 'px'; el.style.top = rec.y + 'px'; }
+}
+
+function applyRotationDelta(delta) {
+  if (!selectedUUID) return;
+  const rec = items.find(i => i.uuid === selectedUUID);
+  if (!rec) return;
+  rec.rotation = ((rec.rotation + delta) % 360 + 360) % 360;
+  document.getElementById('rotate-slider').value = rec.rotation;
+  document.getElementById('rotate-num').value    = rec.rotation;
+  const el = getItemEl(selectedUUID);
+  if (el) el.style.transform = `rotate(${rec.rotation}deg)`;
+}
+
+// ════════════════════════════════════════
+//  HINT
+// ════════════════════════════════════════
+function updateHint() {
+  document.getElementById('canvas-hint').style.display = items.length ? 'none' : 'flex';
+}
+
+// ════════════════════════════════════════
+//  MEANINGS PANEL
+// ════════════════════════════════════════
+function updateMeanings() {
+  const list = document.getElementById('meaning-list');
+  if (!items.length) {
+    list.innerHTML = '<div class="empty-panel">Add flowers to see<br>what they symbolize.<br><br>Every one has a story.</div>';
+    return;
+  }
+
+  // Deduplicate by id
+  const seen   = new Set();
+  const unique = items.filter(i => {
+    if (seen.has(i.data.id)) return false;
+    seen.add(i.data.id);
+    return true;
+  });
+
+  list.innerHTML = unique.map(i => {
+    const d    = i.data;
+    const tags = (d.tags || [])
+      .map(t => `<span class="meaning-tag tag-${t}">${t}</span>`)
+      .join('');
+    return `
+      <div class="meaning-card">
+        <div class="meaning-flower-name">${d.name}</div>
+        ${tags ? `<div class="meaning-tags">${tags}</div>` : ''}
+        <div class="meaning-body">${d.meaning || 'A personal addition — its meaning is yours to define.'}</div>
+        ${d.origin ? `<div class="meaning-origin">— ${d.origin}</div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+//  CUSTOM UPLOAD FLOW
+// ════════════════════════════════════════
+document.getElementById('upload-trigger').addEventListener('click', () => {
+  document.getElementById('file-input').click();
+});
+
+document.getElementById('file-input').addEventListener('change', e => {
+  if (!e.target.files.length) return;
+  openUploadModal(e.target.files[0]);
+  e.target.value = ''; // reset so same file can be uploaded again
+});
+
+// Drag onto upload zone
+document.getElementById('upload-trigger').addEventListener('dragover', e => { e.preventDefault(); });
+document.getElementById('upload-trigger').addEventListener('drop', e => {
+  e.preventDefault();
+  if (e.dataTransfer.files.length) openUploadModal(e.dataTransfer.files[0]);
+});
+
+// File drop inside modal
+document.getElementById('file-drop-zone').addEventListener('click', () => {
+  document.getElementById('modal-file-input').click();
+});
+document.getElementById('file-drop-zone').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') document.getElementById('modal-file-input').click();
+});
+
+document.getElementById('modal-file-input').addEventListener('change', e => {
+  if (!e.target.files[0]) return;
+  readFileAsDataURL(e.target.files[0], url => {
+    pendingUploadDataURL = url;
+    document.getElementById('upload-preview').src = url;
+    document.getElementById('upload-preview').style.display = 'block';
+    document.getElementById('custom-name').value = fileNameToLabel(e.target.files[0].name);
+  });
+});
+
+function openUploadModal(file) {
+  readFileAsDataURL(file, url => {
+    pendingUploadDataURL = url;
+    document.getElementById('upload-preview').src = url;
+    document.getElementById('upload-preview').style.display = 'block';
+    document.getElementById('custom-name').value    = fileNameToLabel(file.name);
+    document.getElementById('custom-meaning').value = '';
+    document.getElementById('custom-tags').value    = '';
+    document.getElementById('upload-modal').classList.add('open');
+  });
+}
+
+function closeUploadModal() {
+  document.getElementById('upload-modal').classList.remove('open');
+  document.getElementById('upload-preview').style.display = 'none';
+  document.getElementById('custom-name').value    = '';
+  document.getElementById('custom-meaning').value = '';
+  document.getElementById('custom-tags').value    = '';
+  pendingUploadDataURL = null;
+}
+
+function confirmUpload() {
+  if (!pendingUploadDataURL) { alert('Please choose an image first.'); return; }
+  const name    = document.getElementById('custom-name').value.trim()    || 'Custom Flower';
+  const meaning = document.getElementById('custom-meaning').value.trim() || 'A personal addition — its meaning is yours to define.';
+  const tagsRaw = document.getElementById('custom-tags').value.trim();
+  const tags    = tagsRaw
+    ? tagsRaw.split(',').map(t => t.trim().toLowerCase()).filter(Boolean)
+    : [];
+
+  const newItem = {
+    id:      'custom-' + Date.now(),
+    name, meaning, tags,
+    origin:  'Custom upload',
+    imgUrl:  pendingUploadDataURL
+  };
+
+  customItems.push(newItem);
+
+  // Add tile to flower palette
+  document.getElementById('flower-palette').appendChild(makeTile(newItem, false));
+
+  closeUploadModal();
+}
+
+// ════════════════════════════════════════
+//  CARD MODAL
+// ════════════════════════════════════════
+function openCardModal() {
+  if (!items.length) { alert('Add some flowers to your bouquet first!'); return; }
+
+  const name = document.getElementById('bouquet-name').value.trim() || 'My Bouquet';
+  document.getElementById('card-title').textContent = name;
+
+  // Count duplicates
+  const counts = {};
+  items.forEach(i => { counts[i.data.id] = (counts[i.data.id] || 0) + 1; });
+
+  // Unique items for display
+  const seen   = new Set();
+  const unique = items.filter(i => {
+    if (seen.has(i.data.id)) return false;
+    seen.add(i.data.id);
+    return true;
+  });
+
+  document.getElementById('card-body').innerHTML = unique.map(i => {
+    const d = i.data;
+    const n = counts[d.id];
+
+    let icon;
+    if (d.imgUrl) {
+      icon = `<img src="${d.imgUrl}" style="width:32px;height:32px;object-fit:contain;" alt="${d.name}">`;
+    } else if (d.svg) {
+      icon = d.svg.replace(/width="\d+" height="\d+"/g, 'width="32" height="32"');
+    } else {
+      icon = '✿';
+    }
+
+    const shortMeaning = d.meaning
+      ? d.meaning.slice(0, 150) + (d.meaning.length > 150 ? '…' : '')
+      : 'A personal addition.';
+
+    return `
+      <div class="card-flower-row">
+        <div class="card-flower-icon">${icon}</div>
+        <div class="card-flower-info">
+          <span class="name">${d.name}${n > 1 ? `<span class="count">×${n}</span>` : ''}</span>
+          <div class="meaning-short">${shortMeaning}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('card-modal').classList.add('open');
+}
+
+function closeCardModal() {
+  document.getElementById('card-modal').classList.remove('open');
+}
+
+// Close modals on backdrop click
+document.getElementById('card-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('card-modal')) closeCardModal();
+});
+document.getElementById('upload-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('upload-modal')) closeUploadModal();
+});
+
+// Close on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeCardModal();
+    closeUploadModal();
+  }
+});
+
+// ════════════════════════════════════════
+//  SAVE IMAGES
+// ════════════════════════════════════════
+function loadHtml2Canvas(cb) {
+  if (window.html2canvas) { cb(); return; }
+  const s   = document.createElement('script');
+  s.src     = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+  s.onload  = cb;
+  s.onerror = () => alert('Could not load image export library. Try using a browser screenshot instead.');
+  document.head.appendChild(s);
+}
+
+function saveCanvasImage() {
+  loadHtml2Canvas(() => {
+    html2canvas(canvas, { backgroundColor: '#ffffff', scale: 2, useCORS: true }).then(c => {
+      downloadCanvas(c, (document.getElementById('bouquet-name').value || 'bouquet') + '.png');
+    });
+  });
+}
+
+function saveCardImage() {
+  loadHtml2Canvas(() => {
+    html2canvas(document.getElementById('card-inner'), {
+      backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--white').trim() || '#ffffff',
+      scale: 2
+    }).then(c => {
+      downloadCanvas(c, (document.getElementById('bouquet-name').value || 'bouquet') + '-card.png');
+    });
+  });
+}
+
+function downloadCanvas(canvasEl, filename) {
+  const a      = document.createElement('a');
+  a.download   = filename;
+  a.href       = canvasEl.toDataURL('image/png');
+  a.click();
+}
+
+// ════════════════════════════════════════
+//  UTILITY
+// ════════════════════════════════════════
+function readFileAsDataURL(file, cb) {
+  const reader  = new FileReader();
+  reader.onload = ev => cb(ev.target.result);
+  reader.readAsDataURL(file);
+}
+
+function fileNameToLabel(filename) {
+  return filename.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+}
+
+// ════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════
+buildPalette();
+updateHint();
+updateMeanings();
+</script>
+</body>
+</html>
