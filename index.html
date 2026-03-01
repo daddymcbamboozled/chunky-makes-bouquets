@@ -4,16 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bloom Builder — Make a Bouquet</title>
-
-<!-- ═══════════════════════════════════════════════
-     THEME — swap this file to change the entire look
-     ═══════════════════════════════════════════════ -->
 <link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
-<!-- ═══════════════════ HEADER ═══════════════════ -->
-<header>
+<!-- ═══════════ HEADER ═══════════ -->
+<header id="app-header">
   <div class="header-stamp">✿</div>
   <div class="header-text">
     <h1><span class="accent">Bloom</span> Builder</h1>
@@ -22,43 +18,41 @@
   <div class="header-tape"></div>
 </header>
 
-<!-- ═══════════════════ THREE-COLUMN LAYOUT ═══════════════════ -->
+<!-- ═══════════ THREE-COLUMN LAYOUT ═══════════ -->
 <div class="app-layout">
 
-  <!-- ─── LEFT PANEL: Flower & Ribbon Palette ─── -->
+  <!-- LEFT: Palette -->
   <aside class="panel" id="left-panel">
     <div class="panel-title">✂ The Stash</div>
     <div class="panel-inner">
-
       <div class="section-label">Flowers</div>
       <div class="flower-grid" id="flower-palette"></div>
 
       <div class="section-label">Ribbons &amp; Wraps</div>
       <div class="flower-grid" id="ribbon-palette"></div>
 
-      <div class="section-label">Custom</div>
+      <div class="section-label">Add Custom</div>
+      <!-- New item: choose category -->
+      <div style="display:flex;gap:5px;margin-bottom:6px;">
+        <select id="new-item-category" style="flex:1;font-family:var(--font-body);font-size:0.75rem;border:var(--border);padding:3px 5px;background:var(--bg);color:var(--ink);outline:none;">
+          <option value="flower">Flower</option>
+          <option value="ribbon">Ribbon / Wrap</option>
+        </select>
+      </div>
       <div class="upload-zone" id="upload-trigger">
         <span class="upload-icon">📎</span>
-        <p>Drop PNG / JPG / SVG here<br>or click to add your own</p>
+        <p>Drop PNG / JPG / SVG<br>or click to browse</p>
       </div>
       <input type="file" id="file-input" accept="image/png,image/jpeg,image/svg+xml" multiple style="display:none">
-      <p class="upload-note">You can add a name, meaning, and tags to any custom image.</p>
-
+      <p class="upload-note">Uploads are session-only unless you embed them in data.js — see the export button in the editor.</p>
     </div>
   </aside>
 
-  <!-- ─── CENTER: Canvas ─── -->
+  <!-- CENTER: Canvas -->
   <main class="canvas-wrapper">
-
     <div class="canvas-topbar">
-      <input
-        class="bouquet-name-input"
-        type="text"
-        id="bouquet-name"
-        placeholder="name your bouquet..."
-        maxlength="60"
-        aria-label="Bouquet name"
-      >
+      <input class="bouquet-name-input" type="text" id="bouquet-name"
+        placeholder="name your bouquet…" maxlength="60" aria-label="Bouquet name">
       <button class="btn btn-primary" onclick="openCardModal()">✦ View Card</button>
     </div>
 
@@ -69,90 +63,93 @@
       </div>
     </div>
 
-    <!-- Controls -->
-    <div class="controls-bar">
-      <div class="ctrl-group">
-        <span>Size</span>
-        <input type="range" id="size-slider" min="30" max="200" value="80" aria-label="Size">
-        <span id="size-label">80</span>
-      </div>
-      <div class="ctrl-divider"></div>
-      <div class="ctrl-group">
-        <span>Rotate</span>
-        <input type="range" id="rotate-slider" min="0" max="360" value="0" aria-label="Rotate">
-        <input type="number" id="rotate-num" min="0" max="360" value="0" aria-label="Rotate degrees">°
-      </div>
-      <div class="ctrl-divider"></div>
-      <div class="ctrl-group">
-        Selected: <span id="selected-label" style="color:var(--accent); margin-left:3px;">none</span>
-      </div>
-    </div>
-
     <div class="canvas-actions">
-      <button class="btn btn-sm" onclick="deleteSelected()">🗑 Delete</button>
+      <button class="btn btn-sm" onclick="deleteSelected()" title="Delete (Del)">🗑 Delete</button>
       <button class="btn btn-sm" onclick="clearCanvas()">Clear All</button>
-      <button class="btn btn-sm" onclick="bringForward()">↑ Forward</button>
+      <button class="btn btn-sm" onclick="bringForward()" title="[ ]">↑ Forward</button>
       <button class="btn btn-sm" onclick="sendBack()">↓ Back</button>
       <button class="btn btn-sm btn-red" onclick="saveCanvasImage()">💾 Save Image</button>
+      <div class="selected-info">Selected: <span id="selected-label">none</span></div>
     </div>
-
   </main>
 
-  <!-- ─── RIGHT PANEL: Meanings ─── -->
+  <!-- RIGHT: Meanings -->
   <aside class="panel panel-right">
     <div class="panel-title">📖 Meanings</div>
     <div class="panel-inner" id="meaning-list">
-      <div class="empty-panel">
-        Add flowers to see<br>what they symbolize.<br><br>
-        Every one has a story.
-      </div>
+      <div class="empty-panel">Add flowers to see<br>what they symbolize.<br><br>Every one has a story.</div>
     </div>
   </aside>
 
 </div><!-- /app-layout -->
 
 
-<!-- ═══════════════════ UPLOAD MODAL ═══════════════════ -->
-<div class="modal-overlay" id="upload-modal" role="dialog" aria-modal="true" aria-label="Add custom flower">
+<!-- ═══════════ EDIT / ADD ITEM MODAL ═══════════ -->
+<div class="modal-overlay" id="edit-modal" role="dialog" aria-modal="true">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeUploadModal()" aria-label="Close">×</button>
-    <h2>Add Custom Item</h2>
+    <button class="modal-close" onclick="closeEditModal()" aria-label="Close">×</button>
+    <h2 id="edit-modal-title">Add Item</h2>
 
     <div class="form-group">
-      <label>Image</label>
-      <div class="file-drop" id="file-drop-zone" role="button" tabindex="0" aria-label="Choose image file">
-        <span style="font-size:1.6rem;">🖼</span>
-        <p style="font-size:0.8rem;margin-top:0.3rem;">Click or drop image here</p>
-        <img class="preview-img" id="upload-preview" style="display:none" alt="Upload preview">
+      <label>Category</label>
+      <select id="edit-category">
+        <option value="flower">Flower</option>
+        <option value="ribbon">Ribbon / Wrap</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Image <span style="opacity:.5;font-size:.65rem;">(PNG / JPG / SVG)</span></label>
+      <div class="file-drop" id="edit-file-drop" role="button" tabindex="0">
+        <span style="font-size:1.4rem;">🖼</span>
+        <p style="font-size:0.78rem;margin-top:.25rem;" id="edit-drop-hint">Click or drop image here</p>
+        <img class="preview-img" id="edit-preview" style="display:none" alt="preview">
       </div>
-      <input type="file" id="modal-file-input" accept="image/png,image/jpeg,image/svg+xml" style="display:none">
+      <input type="file" id="edit-file-input" accept="image/png,image/jpeg,image/svg+xml" style="display:none">
     </div>
 
     <div class="form-group">
       <label>Name</label>
-      <input type="text" id="custom-name" placeholder="e.g. Blue Iris" maxlength="40">
+      <input type="text" id="edit-name" placeholder="e.g. Blue Iris" maxlength="40">
     </div>
 
     <div class="form-group">
       <label>Meaning / Description</label>
-      <textarea id="custom-meaning" rows="3" placeholder="What does this flower mean? Look up its traditional symbolism, or write your own."></textarea>
+      <textarea id="edit-meaning" rows="3" placeholder="Traditional symbolism, personal meaning, or both."></textarea>
     </div>
 
     <div class="form-group">
-      <label>Tags <span style="opacity:0.5;font-size:0.68rem;">(comma-separated: love, hope, memory…)</span></label>
-      <input type="text" id="custom-tags" placeholder="love, hope, memory">
+      <label>Origin <span style="opacity:.5;font-size:.65rem;">(optional)</span></label>
+      <input type="text" id="edit-origin" placeholder="e.g. Victorian floriography" maxlength="80">
     </div>
 
-    <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:0.75rem;">
-      <button class="btn btn-sm" onclick="closeUploadModal()">Cancel</button>
-      <button class="btn btn-sm btn-primary" onclick="confirmUpload()">Add to Stash ✓</button>
+    <div class="form-group">
+      <label>Tags <span style="opacity:.5;font-size:.65rem;">(comma-separated: love, hope, memory…)</span></label>
+      <input type="text" id="edit-tags" placeholder="love, hope, memory">
+    </div>
+
+    <!-- Base64 export for persisting in data.js -->
+    <div id="b64-section" style="display:none;margin-top:.5rem;">
+      <label style="font-family:var(--font-label);font-size:.65rem;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);display:block;margin-bottom:.25rem;">
+        Embed in data.js
+      </label>
+      <p style="font-family:var(--font-body);font-size:0.7rem;color:var(--ink-light);line-height:1.4;margin-bottom:.35rem;">
+        Copy this value and paste it as the <code style="background:var(--bg);padding:1px 4px;">imgUrl</code> field for this item in <strong>data.js</strong> to make it permanent.
+      </p>
+      <button class="btn btn-sm" onclick="copyB64()" style="margin-bottom:.35rem;">📋 Copy base64</button>
+      <div class="b64-export visible" id="b64-display" style="display:none;"></div>
+    </div>
+
+    <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:.9rem;">
+      <button class="btn btn-sm" onclick="closeEditModal()">Cancel</button>
+      <button class="btn btn-sm btn-primary" id="edit-save-btn" onclick="saveEditModal()">Save ✓</button>
     </div>
   </div>
 </div>
 
 
-<!-- ═══════════════════ CARD MODAL ═══════════════════ -->
-<div class="modal-overlay" id="card-modal" role="dialog" aria-modal="true" aria-label="Bouquet card">
+<!-- ═══════════ BOUQUET CARD MODAL ═══════════ -->
+<div class="modal-overlay" id="card-modal" role="dialog" aria-modal="true">
   <div class="card-inner" id="card-inner">
     <div class="card-header">
       <div class="stamp-row">✿ ✂ ✿</div>
@@ -169,75 +166,92 @@
 </div>
 
 
-<!-- ═══════════════════════════════════════════════
-     DATA — swap this file to change flowers/ribbons
-     ═══════════════════════════════════════════════ -->
+<!-- ═══════════ DATA ═══════════ -->
 <script src="data.js"></script>
 
-<!-- ═══════════════════════════════════════════════
-     APP LOGIC — edit below for functionality changes
-     ═══════════════════════════════════════════════ -->
+<!-- ═══════════ APP LOGIC ═══════════ -->
 <script>
-// ════════════════════════════════════════
+// ─────────────────────────────────────────
 //  STATE
-// ════════════════════════════════════════
-let items        = [];     // all placed items on canvas
-let customItems  = [];     // user-uploaded items
+// ─────────────────────────────────────────
+let items        = [];       // placed items on canvas
+let customItems  = [];       // runtime-added custom items
 let selectedUUID = null;
-let dragState    = null;   // active drag: { uuid, ox, oy }
 let maxZ         = 10;
-let pendingUploadDataURL = null;
+
+// Edit modal state
+let editMode     = 'add';    // 'add' | 'edit'
+let editTargetId = null;     // id of item being edited (edit mode)
+let pendingB64   = null;     // base64 data URL from file drop
+
+// Interaction state
+let interactState = null;
+/* interactState shapes:
+   { type:'move',   uuid, startX, startY, startItemX, startItemY }
+   { type:'resize', uuid, startX, startY, startSize, startItemX, startItemY, cx, cy }
+   { type:'rotate', uuid, cx, cy, startAngle }
+*/
 
 const canvas = document.getElementById('canvas-container');
 
-// ════════════════════════════════════════
+// ─────────────────────────────────────────
+//  INIT — measure header, set CSS var
+// ─────────────────────────────────────────
+function initLayout() {
+  const h = document.getElementById('app-header').offsetHeight;
+  document.documentElement.style.setProperty('--header-h', h + 'px');
+}
+window.addEventListener('resize', initLayout);
+
+// ─────────────────────────────────────────
 //  HELPERS
-// ════════════════════════════════════════
-function getAllData() {
-  return [...FLOWERS, ...RIBBONS, ...customItems];
+// ─────────────────────────────────────────
+function getAllData() { return [...FLOWERS, ...RIBBONS, ...customItems]; }
+function getEl(uuid)  { return canvas.querySelector(`[data-uuid="${uuid}"]`); }
+function uid()        { return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)+Date.now().toString(36); }
+function fileToLabel(n){ return n.replace(/\.[^.]+$/,'').replace(/[-_]/g,' '); }
+
+function readFile(file, cb) {
+  const r = new FileReader();
+  r.onload = e => cb(e.target.result);
+  r.readAsDataURL(file);
 }
 
-function getItemEl(uuid) {
-  return canvas.querySelector(`[data-uuid="${uuid}"]`);
-}
-
-function uid() {
-  return (crypto.randomUUID
-    ? crypto.randomUUID()
-    : Math.random().toString(36).slice(2) + Date.now().toString(36));
-}
-
-// ════════════════════════════════════════
+// ─────────────────────────────────────────
 //  BUILD PALETTE
-// ════════════════════════════════════════
+// ─────────────────────────────────────────
 function buildPalette() {
-  buildPaletteSection(FLOWERS, 'flower-palette', false);
-  buildPaletteSection(RIBBONS, 'ribbon-palette', true);
+  buildSection(FLOWERS, 'flower-palette', 'flower');
+  buildSection(RIBBONS, 'ribbon-palette', 'ribbon');
 }
 
-function buildPaletteSection(dataArr, containerId, isRibbon) {
-  const container = document.getElementById(containerId);
-  dataArr.forEach(d => container.appendChild(makeTile(d, isRibbon)));
+function buildSection(arr, containerId, category) {
+  const el = document.getElementById(containerId);
+  arr.forEach(d => el.appendChild(makeTile(d, category)));
 }
 
-function makeTile(data, isRibbon = false) {
+function makeTile(data, category) {
   const tile = document.createElement('div');
-  tile.className = isRibbon ? 'ribbon-tile' : 'flower-tile';
+  tile.className = category === 'ribbon' ? 'ribbon-tile' : 'flower-tile';
   tile.draggable = true;
   tile.dataset.id = data.id;
-  tile.setAttribute('title', data.name);
-  tile.setAttribute('aria-label', data.name);
-  tile.setAttribute('role', 'button');
-  tile.setAttribute('tabindex', '0');
 
   const media = data.imgUrl
-    ? `<img src="${data.imgUrl}" style="width:50px;height:50px;object-fit:contain;display:block;margin:0 auto 3px;" alt="${data.name}">`
+    ? `<img src="${data.imgUrl}" style="width:46px;height:46px;object-fit:contain;display:block;margin:0 auto 3px;" alt="${data.name}">`
     : (data.svg || '');
 
-  tile.innerHTML = media + `<div class="fname">${data.name}</div>`;
+  tile.innerHTML = media + `<div class="tile-fname">${data.name}</div>`;
 
-  tile.addEventListener('click', () => placeItem(data));
-  tile.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') placeItem(data); });
+  // Edit button
+  const editBtn = document.createElement('button');
+  editBtn.className = 'tile-edit-btn';
+  editBtn.textContent = 'edit';
+  editBtn.title = 'Edit this item';
+  editBtn.addEventListener('click', e => { e.stopPropagation(); openEditModal('edit', data.id); });
+  tile.appendChild(editBtn);
+
+  tile.addEventListener('click',   () => placeItem(data));
+  tile.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') placeItem(data); });
   tile.addEventListener('dragstart', e => {
     e.dataTransfer.setData('itemId', data.id);
     e.dataTransfer.effectAllowed = 'copy';
@@ -246,15 +260,14 @@ function makeTile(data, isRibbon = false) {
   return tile;
 }
 
-// ════════════════════════════════════════
-//  PLACE ITEM ON CANVAS
-// ════════════════════════════════════════
+// ─────────────────────────────────────────
+//  PLACE ITEM
+// ─────────────────────────────────────────
 function placeItem(data, x, y) {
-  const size = parseInt(document.getElementById('size-slider').value) || 80;
+  const size = 80;
   if (x === undefined) {
-    // Random-ish center placement so multiple drops don't stack exactly
-    x = canvas.offsetWidth  / 2 - size / 2 + (Math.random() - 0.5) * 80;
-    y = canvas.offsetHeight / 2 - size / 2 + (Math.random() - 0.5) * 80;
+    x = canvas.offsetWidth  / 2 - size/2 + (Math.random()-.5)*80;
+    y = canvas.offsetHeight / 2 - size/2 + (Math.random()-.5)*80;
   }
   const rec = { uuid: uid(), data, x, y, size, rotation: 0, zIndex: ++maxZ };
   items.push(rec);
@@ -269,25 +282,21 @@ function renderItem(rec) {
   el.className = 'placed-item';
   el.dataset.uuid = rec.uuid;
   el.tabIndex = 0;
-  el.setAttribute('aria-label', rec.data.name);
   applyItemStyle(el, rec);
   setItemContent(el, rec);
 
-  el.addEventListener('mousedown',  onItemMousedown);
-  el.addEventListener('touchstart', onItemTouchstart, { passive: false });
-  el.addEventListener('click',      e => { e.stopPropagation(); selectItem(rec.uuid); });
-  el.addEventListener('keydown',    e => {
-    if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); deleteSelected(); }
+  el.addEventListener('pointerdown', onItemPointerdown);
+  el.addEventListener('click', e => { e.stopPropagation(); selectItem(rec.uuid); });
+  el.addEventListener('keydown', e => {
+    if(e.key==='Delete'||e.key==='Backspace'){ e.preventDefault(); deleteSelected(); }
   });
-
   canvas.appendChild(el);
 
-  // Animate in
-  el.style.opacity = '0';
-  requestAnimationFrame(() => {
-    el.style.transition = 'opacity 0.18s';
-    el.style.opacity = '1';
-    setTimeout(() => { el.style.transition = ''; }, 200);
+  el.style.opacity='0';
+  requestAnimationFrame(()=>{
+    el.style.transition='opacity .15s';
+    el.style.opacity='1';
+    setTimeout(()=>el.style.transition='',200);
   });
 }
 
@@ -301,540 +310,630 @@ function applyItemStyle(el, rec) {
 }
 
 function setItemContent(el, rec) {
-  // Remove old content but keep the selection ring if present
-  const ring = el.querySelector('.selected-ring');
+  const ring       = el.querySelector('.selected-ring');
+  const resizeH    = el.querySelector('.resize-handle');
+  const rotateH    = el.querySelector('.rotate-handle');
   if (rec.data.imgUrl) {
     el.innerHTML = `<img src="${rec.data.imgUrl}"
       style="width:${rec.size}px;height:${rec.size}px;object-fit:contain;display:block;pointer-events:none;"
       alt="${rec.data.name}">`;
   } else {
     el.innerHTML = rec.data.svg || '';
-    const svgEl = el.querySelector('svg');
-    if (svgEl) {
-      svgEl.setAttribute('width',  rec.size);
-      svgEl.setAttribute('height', rec.size);
-    }
+    const svg = el.querySelector('svg');
+    if(svg){ svg.setAttribute('width',rec.size); svg.setAttribute('height',rec.size); }
   }
-  if (ring) el.appendChild(ring);
+  if(ring)    el.appendChild(ring);
+  if(resizeH) el.appendChild(resizeH);
+  if(rotateH) el.appendChild(rotateH);
 }
 
-// ════════════════════════════════════════
+// ─────────────────────────────────────────
 //  SELECTION
-// ════════════════════════════════════════
+// ─────────────────────────────────────────
 function selectItem(uuid) {
-  // Remove previous selection ring
-  canvas.querySelectorAll('.selected-ring').forEach(r => r.remove());
+  // remove all rings/handles from every item
+  canvas.querySelectorAll('.selected-ring,.resize-handle,.rotate-handle').forEach(e=>e.remove());
   selectedUUID = uuid;
+  const rec = items.find(i=>i.uuid===uuid);
+  document.getElementById('selected-label').textContent = rec ? rec.data.name : 'none';
+  if(!rec) return;
 
-  const rec = items.find(i => i.uuid === uuid);
-  const label = document.getElementById('selected-label');
+  const el = getEl(uuid);
+  if(!el) return;
 
-  if (!rec) { label.textContent = 'none'; return; }
+  // Selection ring
+  const ring = document.createElement('div');
+  ring.className = 'selected-ring';
+  el.appendChild(ring);
 
-  label.textContent = rec.data.name;
+  // Resize handle (↘)
+  const rh = document.createElement('div');
+  rh.className = 'resize-handle';
+  rh.title = 'Drag to resize';
+  rh.innerHTML = '↘';
+  rh.addEventListener('pointerdown', onResizePointerdown);
+  el.appendChild(rh);
 
-  // Sync controls to selected item
-  document.getElementById('size-slider').value   = rec.size;
-  document.getElementById('size-label').textContent = rec.size;
-  document.getElementById('rotate-slider').value = rec.rotation;
-  document.getElementById('rotate-num').value    = rec.rotation;
+  // Rotate handle (↻)
+  const rot = document.createElement('div');
+  rot.className = 'rotate-handle';
+  rot.title = 'Drag to rotate';
+  rot.innerHTML = '↻';
+  rot.addEventListener('pointerdown', onRotatePointerdown);
+  el.appendChild(rot);
 
-  // Add selection ring
-  const el = getItemEl(uuid);
-  if (el) {
-    const ring = document.createElement('div');
-    ring.className = 'selected-ring';
-    el.appendChild(ring);
-    el.focus();
-  }
+  el.focus();
 }
 
-// Click on canvas background deselects
 canvas.addEventListener('click', e => {
-  if (e.target === canvas || e.target.classList.contains('canvas-hint') || e.target === document.getElementById('canvas-hint')) {
-    canvas.querySelectorAll('.selected-ring').forEach(r => r.remove());
+  if(e.target===canvas || e.target.closest('.canvas-hint')){
+    canvas.querySelectorAll('.selected-ring,.resize-handle,.rotate-handle').forEach(e=>e.remove());
     selectedUUID = null;
     document.getElementById('selected-label').textContent = 'none';
   }
 });
 
-// ════════════════════════════════════════
-//  DRAG FROM PALETTE (HTML drag API)
-// ════════════════════════════════════════
-canvas.addEventListener('dragover', e => {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'copy';
-});
+// ─────────────────────────────────────────
+//  POINTER EVENTS — unified mouse+touch
+// ─────────────────────────────────────────
+function canvasPoint(e) {
+  const cr = canvas.getBoundingClientRect();
+  return { x: e.clientX - cr.left, y: e.clientY - cr.top };
+}
 
-canvas.addEventListener('drop', e => {
-  e.preventDefault();
-  const id   = e.dataTransfer.getData('itemId');
-  const data = getAllData().find(d => d.id === id);
-  if (!data) return;
-  const rect = canvas.getBoundingClientRect();
-  const size = parseInt(document.getElementById('size-slider').value) || 80;
-  placeItem(data, e.clientX - rect.left - size / 2, e.clientY - rect.top - size / 2);
-});
-
-// ════════════════════════════════════════
-//  MOVE DRAG (mouse)
-// ════════════════════════════════════════
-function onItemMousedown(e) {
-  if (e.button !== 0) return;
-  e.preventDefault();
-  e.stopPropagation();
+// MOVE
+function onItemPointerdown(e) {
+  // ignore clicks on handles
+  if(e.target.classList.contains('resize-handle') || e.target.classList.contains('rotate-handle')) return;
+  if(e.button !== undefined && e.button !== 0) return;
+  e.preventDefault(); e.stopPropagation();
 
   const el   = e.currentTarget;
   const uuid = el.dataset.uuid;
   selectItem(uuid);
 
-  const rec = items.find(i => i.uuid === uuid);
-  const cr  = canvas.getBoundingClientRect();
-  const er  = el.getBoundingClientRect();
+  const rec = items.find(i=>i.uuid===uuid);
+  const pt  = canvasPoint(e);
 
-  dragState = {
-    uuid,
-    ox: e.clientX - cr.left - rec.x,
-    oy: e.clientY - cr.top  - rec.y
+  interactState = {
+    type: 'move', uuid,
+    startX: pt.x, startY: pt.y,
+    startItemX: rec.x, startItemY: rec.y
   };
 
-  el.style.cursor = 'grabbing';
+  el.setPointerCapture(e.pointerId);
+  el.addEventListener('pointermove',  onPointerMove);
+  el.addEventListener('pointerup',    onPointerUp);
+  el.addEventListener('pointercancel',onPointerUp);
 }
 
-document.addEventListener('mousemove', e => {
-  if (!dragState) return;
-  const rec = items.find(i => i.uuid === dragState.uuid);
-  if (!rec) return;
-  const cr = canvas.getBoundingClientRect();
-  rec.x = e.clientX - cr.left - dragState.ox;
-  rec.y = e.clientY - cr.top  - dragState.oy;
-  const el = getItemEl(dragState.uuid);
-  if (el) { el.style.left = rec.x + 'px'; el.style.top = rec.y + 'px'; }
-});
+// RESIZE
+function onResizePointerdown(e) {
+  e.preventDefault(); e.stopPropagation();
+  const uuid = e.currentTarget.closest('.placed-item').dataset.uuid;
+  const rec  = items.find(i=>i.uuid===uuid);
+  const el   = getEl(uuid);
+  const pt   = canvasPoint(e);
 
-document.addEventListener('mouseup', () => {
-  if (!dragState) return;
-  const el = getItemEl(dragState.uuid);
-  if (el) el.style.cursor = 'move';
-  dragState = null;
-});
+  // centre of the item in canvas coords (un-rotated)
+  const cx = rec.x + rec.size/2;
+  const cy = rec.y + rec.size/2;
 
-// ════════════════════════════════════════
-//  MOVE DRAG (touch)
-// ════════════════════════════════════════
-function onItemTouchstart(e) {
-  e.preventDefault();
-  e.stopPropagation();
-
-  const el    = e.currentTarget;
-  const uuid  = el.dataset.uuid;
-  selectItem(uuid);
-
-  const rec   = items.find(i => i.uuid === uuid);
-  const touch = e.touches[0];
-  const cr    = canvas.getBoundingClientRect();
-  const er    = el.getBoundingClientRect();
-
-  dragState = {
-    uuid,
-    ox: touch.clientX - cr.left - rec.x,
-    oy: touch.clientY - cr.top  - rec.y
+  interactState = {
+    type: 'resize', uuid,
+    startX: pt.x, startY: pt.y,
+    startSize: rec.size,
+    cx, cy
   };
+
+  e.currentTarget.setPointerCapture(e.pointerId);
+  e.currentTarget.addEventListener('pointermove',  onPointerMove);
+  e.currentTarget.addEventListener('pointerup',    onPointerUp);
+  e.currentTarget.addEventListener('pointercancel',onPointerUp);
 }
 
-document.addEventListener('touchmove', e => {
-  if (!dragState) return;
+// ROTATE
+function onRotatePointerdown(e) {
+  e.preventDefault(); e.stopPropagation();
+  const uuid = e.currentTarget.closest('.placed-item').dataset.uuid;
+  const rec  = items.find(i=>i.uuid===uuid);
+  const pt   = canvasPoint(e);
+
+  const cx = rec.x + rec.size/2;
+  const cy = rec.y + rec.size/2;
+
+  // angle from centre to pointer at start
+  const startAngle = Math.atan2(pt.y - cy, pt.x - cx) * 180/Math.PI - rec.rotation;
+
+  interactState = { type:'rotate', uuid, cx, cy, startAngle };
+
+  e.currentTarget.setPointerCapture(e.pointerId);
+  e.currentTarget.addEventListener('pointermove',  onPointerMove);
+  e.currentTarget.addEventListener('pointerup',    onPointerUp);
+  e.currentTarget.addEventListener('pointercancel',onPointerUp);
+}
+
+function onPointerMove(e) {
+  if(!interactState) return;
   e.preventDefault();
-  const touch = e.touches[0];
-  const rec   = items.find(i => i.uuid === dragState.uuid);
-  if (!rec) return;
+  const pt  = canvasPoint(e);
+  const rec = items.find(i=>i.uuid===interactState.uuid);
+  if(!rec) return;
+  const el  = getEl(interactState.uuid);
+  if(!el) return;
+
+  if(interactState.type === 'move') {
+    rec.x = interactState.startItemX + (pt.x - interactState.startX);
+    rec.y = interactState.startItemY + (pt.y - interactState.startY);
+    el.style.left = rec.x + 'px';
+    el.style.top  = rec.y + 'px';
+  }
+
+  if(interactState.type === 'resize') {
+    // distance from item centre to pointer
+    const dx   = pt.x - interactState.cx;
+    const dy   = pt.y - interactState.cy;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    // starting distance
+    const sdx  = interactState.startX - interactState.cx;
+    const sdy  = interactState.startY - interactState.cy;
+    const sDist= Math.sqrt(sdx*sdx + sdy*sdy) || 1;
+
+    const newSize = Math.max(24, Math.round(interactState.startSize * (dist/sDist)));
+    rec.size = newSize;
+    el.style.width  = newSize + 'px';
+    el.style.height = newSize + 'px';
+    // keep centred
+    rec.x = interactState.cx - newSize/2;
+    rec.y = interactState.cy - newSize/2;
+    el.style.left = rec.x + 'px';
+    el.style.top  = rec.y + 'px';
+    setItemContent(el, rec);
+  }
+
+  if(interactState.type === 'rotate') {
+    const angle = Math.atan2(pt.y - interactState.cy, pt.x - interactState.cx) * 180/Math.PI;
+    rec.rotation = ((angle - interactState.startAngle) % 360 + 360) % 360;
+    el.style.transform = `rotate(${rec.rotation}deg)`;
+  }
+}
+
+function onPointerUp(e) {
+  interactState = null;
+  e.currentTarget.removeEventListener('pointermove',  onPointerMove);
+  e.currentTarget.removeEventListener('pointerup',    onPointerUp);
+  e.currentTarget.removeEventListener('pointercancel',onPointerUp);
+}
+
+// ─────────────────────────────────────────
+//  CANVAS DRAG-DROP (from palette)
+// ─────────────────────────────────────────
+canvas.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect='copy'; });
+canvas.addEventListener('drop', e => {
+  e.preventDefault();
+  const id   = e.dataTransfer.getData('itemId');
+  const data = getAllData().find(d=>d.id===id);
+  if(!data) return;
   const cr = canvas.getBoundingClientRect();
-  rec.x = touch.clientX - cr.left - dragState.ox;
-  rec.y = touch.clientY - cr.top  - dragState.oy;
-  const el = getItemEl(dragState.uuid);
-  if (el) { el.style.left = rec.x + 'px'; el.style.top = rec.y + 'px'; }
+  placeItem(data, e.clientX-cr.left-40, e.clientY-cr.top-40);
+});
+
+// ─────────────────────────────────────────
+//  TOUCH PINCH (2-finger resize)
+// ─────────────────────────────────────────
+let pinchState = null;
+
+canvas.addEventListener('touchstart', e => {
+  if(e.touches.length !== 2 || !selectedUUID) return;
+  e.preventDefault();
+  const rec = items.find(i=>i.uuid===selectedUUID);
+  if(!rec) return;
+  const d = Math.hypot(
+    e.touches[0].clientX - e.touches[1].clientX,
+    e.touches[0].clientY - e.touches[1].clientY
+  );
+  pinchState = { startDist: d, startSize: rec.size };
 }, { passive: false });
 
-document.addEventListener('touchend', () => { dragState = null; });
+canvas.addEventListener('touchmove', e => {
+  if(e.touches.length !== 2 || !pinchState || !selectedUUID) return;
+  e.preventDefault();
+  const rec = items.find(i=>i.uuid===selectedUUID);
+  if(!rec) return;
+  const d = Math.hypot(
+    e.touches[0].clientX - e.touches[1].clientX,
+    e.touches[0].clientY - e.touches[1].clientY
+  );
+  const newSize = Math.max(24, Math.round(pinchState.startSize * (d/pinchState.startDist)));
+  rec.size = newSize;
+  const el = getEl(selectedUUID);
+  if(el){
+    el.style.width = el.style.height = newSize+'px';
+    setItemContent(el, rec);
+  }
+}, { passive: false });
 
-// ════════════════════════════════════════
-//  SIZE CONTROL
-// ════════════════════════════════════════
-document.getElementById('size-slider').addEventListener('input', function () {
-  document.getElementById('size-label').textContent = this.value;
-  applySize(parseInt(this.value));
-});
+canvas.addEventListener('touchend', () => { pinchState = null; });
 
-function applySize(val) {
-  if (!selectedUUID) return;
-  const rec = items.find(i => i.uuid === selectedUUID);
-  if (!rec) return;
-  rec.size = val;
-  const el = getItemEl(selectedUUID);
-  if (!el) return;
-  el.style.width  = val + 'px';
-  el.style.height = val + 'px';
-  setItemContent(el, rec);
-}
-
-// ════════════════════════════════════════
-//  ROTATION CONTROL
-// ════════════════════════════════════════
-document.getElementById('rotate-slider').addEventListener('input', function () {
-  document.getElementById('rotate-num').value = this.value;
-  applyRotation(parseInt(this.value));
-});
-
-document.getElementById('rotate-num').addEventListener('input', function () {
-  const v = Math.max(0, Math.min(360, parseInt(this.value) || 0));
-  document.getElementById('rotate-slider').value = v;
-  applyRotation(v);
-});
-
-function applyRotation(deg) {
-  if (!selectedUUID) return;
-  const rec = items.find(i => i.uuid === selectedUUID);
-  if (!rec) return;
-  rec.rotation = deg;
-  const el = getItemEl(selectedUUID);
-  if (el) el.style.transform = `rotate(${deg}deg)`;
-}
-
-// ════════════════════════════════════════
-//  DELETE / CLEAR / Z-ORDER
-// ════════════════════════════════════════
+// ─────────────────────────────────────────
+//  Z-ORDER / DELETE / CLEAR
+// ─────────────────────────────────────────
 function deleteSelected() {
-  if (!selectedUUID) return;
-  items = items.filter(i => i.uuid !== selectedUUID);
-  const el = getItemEl(selectedUUID);
-  if (el) el.remove();
+  if(!selectedUUID) return;
+  items = items.filter(i=>i.uuid!==selectedUUID);
+  const el = getEl(selectedUUID);
+  if(el) el.remove();
   selectedUUID = null;
   document.getElementById('selected-label').textContent = 'none';
-  updateHint();
-  updateMeanings();
+  updateHint(); updateMeanings();
 }
 
 function clearCanvas() {
-  if (items.length === 0) return;
-  if (!confirm('Clear everything on the canvas?')) return;
+  if(!items.length) return;
+  if(!confirm('Clear the whole canvas?')) return;
   items = [];
-  canvas.querySelectorAll('.placed-item').forEach(el => el.remove());
+  canvas.querySelectorAll('.placed-item').forEach(e=>e.remove());
   selectedUUID = null;
   document.getElementById('selected-label').textContent = 'none';
-  updateHint();
-  updateMeanings();
+  updateHint(); updateMeanings();
 }
 
 function bringForward() {
-  if (!selectedUUID) return;
-  const rec = items.find(i => i.uuid === selectedUUID);
-  if (!rec) return;
+  if(!selectedUUID) return;
+  const rec = items.find(i=>i.uuid===selectedUUID);
+  if(!rec) return;
   rec.zIndex = ++maxZ;
-  const el = getItemEl(selectedUUID);
-  if (el) el.style.zIndex = rec.zIndex;
+  const el = getEl(selectedUUID);
+  if(el) el.style.zIndex = rec.zIndex;
 }
 
 function sendBack() {
-  if (!selectedUUID) return;
-  const rec = items.find(i => i.uuid === selectedUUID);
-  if (!rec) return;
+  if(!selectedUUID) return;
+  const rec = items.find(i=>i.uuid===selectedUUID);
+  if(!rec) return;
   rec.zIndex = Math.max(1, rec.zIndex - 2);
-  const el = getItemEl(selectedUUID);
-  if (el) el.style.zIndex = rec.zIndex;
+  const el = getEl(selectedUUID);
+  if(el) el.style.zIndex = rec.zIndex;
 }
 
-// ════════════════════════════════════════
-//  KEYBOARD SHORTCUTS
-// ════════════════════════════════════════
+// ─────────────────────────────────────────
+//  KEYBOARD
+// ─────────────────────────────────────────
 document.addEventListener('keydown', e => {
-  // Don't intercept when typing in inputs
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
-  if ((e.key === 'Delete' || e.key === 'Backspace') && selectedUUID) {
-    e.preventDefault();
-    deleteSelected();
-  }
-  // Arrow nudge (1px, or 10px with shift)
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT') return;
+  if((e.key==='Delete'||e.key==='Backspace')&&selectedUUID){ e.preventDefault(); deleteSelected(); }
   const step = e.shiftKey ? 10 : 1;
-  if (e.key === 'ArrowLeft')  { e.preventDefault(); nudge(-step, 0); }
-  if (e.key === 'ArrowRight') { e.preventDefault(); nudge( step, 0); }
-  if (e.key === 'ArrowUp')    { e.preventDefault(); nudge(0, -step); }
-  if (e.key === 'ArrowDown')  { e.preventDefault(); nudge(0,  step); }
-  // Rotation shortcuts
-  if (e.key === '[') applyRotationDelta(-5);
-  if (e.key === ']') applyRotationDelta(5);
+  if(e.key==='ArrowLeft')  { e.preventDefault(); nudge(-step,0); }
+  if(e.key==='ArrowRight') { e.preventDefault(); nudge( step,0); }
+  if(e.key==='ArrowUp')    { e.preventDefault(); nudge(0,-step); }
+  if(e.key==='ArrowDown')  { e.preventDefault(); nudge(0, step); }
+  if(e.key==='['){ e.preventDefault(); rotateDelta(-5); }
+  if(e.key===']'){ e.preventDefault(); rotateDelta( 5); }
+  if(e.key==='Escape'){ closeEditModal(); closeCardModal(); }
 });
 
-function nudge(dx, dy) {
-  const rec = items.find(i => i.uuid === selectedUUID);
-  if (!rec) return;
-  rec.x += dx; rec.y += dy;
-  const el = getItemEl(selectedUUID);
-  if (el) { el.style.left = rec.x + 'px'; el.style.top = rec.y + 'px'; }
+function nudge(dx,dy){
+  const rec=items.find(i=>i.uuid===selectedUUID); if(!rec) return;
+  rec.x+=dx; rec.y+=dy;
+  const el=getEl(selectedUUID);
+  if(el){ el.style.left=rec.x+'px'; el.style.top=rec.y+'px'; }
 }
 
-function applyRotationDelta(delta) {
-  if (!selectedUUID) return;
-  const rec = items.find(i => i.uuid === selectedUUID);
-  if (!rec) return;
-  rec.rotation = ((rec.rotation + delta) % 360 + 360) % 360;
-  document.getElementById('rotate-slider').value = rec.rotation;
-  document.getElementById('rotate-num').value    = rec.rotation;
-  const el = getItemEl(selectedUUID);
-  if (el) el.style.transform = `rotate(${rec.rotation}deg)`;
+function rotateDelta(d){
+  const rec=items.find(i=>i.uuid===selectedUUID); if(!rec) return;
+  rec.rotation=((rec.rotation+d)%360+360)%360;
+  const el=getEl(selectedUUID);
+  if(el) el.style.transform=`rotate(${rec.rotation}deg)`;
 }
 
-// ════════════════════════════════════════
-//  HINT
-// ════════════════════════════════════════
-function updateHint() {
-  document.getElementById('canvas-hint').style.display = items.length ? 'none' : 'flex';
+// ─────────────────────────────────────────
+//  HINT + MEANINGS
+// ─────────────────────────────────────────
+function updateHint(){
+  document.getElementById('canvas-hint').style.display = items.length?'none':'flex';
 }
 
-// ════════════════════════════════════════
-//  MEANINGS PANEL
-// ════════════════════════════════════════
-function updateMeanings() {
+function updateMeanings(){
   const list = document.getElementById('meaning-list');
-  if (!items.length) {
-    list.innerHTML = '<div class="empty-panel">Add flowers to see<br>what they symbolize.<br><br>Every one has a story.</div>';
+  if(!items.length){
+    list.innerHTML='<div class="empty-panel">Add flowers to see<br>what they symbolize.<br><br>Every one has a story.</div>';
     return;
   }
-
-  // Deduplicate by id
-  const seen   = new Set();
-  const unique = items.filter(i => {
-    if (seen.has(i.data.id)) return false;
-    seen.add(i.data.id);
-    return true;
-  });
-
-  list.innerHTML = unique.map(i => {
-    const d    = i.data;
-    const tags = (d.tags || [])
-      .map(t => `<span class="meaning-tag tag-${t}">${t}</span>`)
-      .join('');
-    return `
-      <div class="meaning-card">
-        <div class="meaning-flower-name">${d.name}</div>
-        ${tags ? `<div class="meaning-tags">${tags}</div>` : ''}
-        <div class="meaning-body">${d.meaning || 'A personal addition — its meaning is yours to define.'}</div>
-        ${d.origin ? `<div class="meaning-origin">— ${d.origin}</div>` : ''}
-      </div>`;
+  const seen=new Set();
+  const unique=items.filter(i=>{ if(seen.has(i.data.id)) return false; seen.add(i.data.id); return true; });
+  list.innerHTML=unique.map(i=>{
+    const d=i.data;
+    const tags=(d.tags||[]).map(t=>`<span class="meaning-tag tag-${t}">${t}</span>`).join('');
+    return `<div class="meaning-card">
+      <div class="meaning-flower-name">${d.name}</div>
+      ${tags?`<div class="meaning-tags">${tags}</div>`:''}
+      <div class="meaning-body">${d.meaning||'A personal addition.'}</div>
+      ${d.origin?`<div class="meaning-origin">— ${d.origin}</div>`:''}
+    </div>`;
   }).join('');
 }
 
-// ════════════════════════════════════════
-//  CUSTOM UPLOAD FLOW
-// ════════════════════════════════════════
-document.getElementById('upload-trigger').addEventListener('click', () => {
-  document.getElementById('file-input').click();
+// ─────────────────────────────────────────
+//  EDIT / ADD MODAL
+// ─────────────────────────────────────────
+function openEditModal(mode, dataId) {
+  editMode     = mode;
+  editTargetId = dataId || null;
+  pendingB64   = null;
+
+  document.getElementById('edit-modal-title').textContent = mode==='add' ? 'Add Item' : 'Edit Item';
+  document.getElementById('edit-preview').style.display  = 'none';
+  document.getElementById('edit-drop-hint').textContent  = 'Click or drop image here';
+  document.getElementById('b64-section').style.display   = 'none';
+  document.getElementById('b64-display').style.display   = 'none';
+  document.getElementById('b64-display').textContent     = '';
+
+  if(mode === 'edit' && dataId) {
+    const data = getAllData().find(d=>d.id===dataId);
+    if(!data) return;
+    document.getElementById('edit-category').value = RIBBONS.find(r=>r.id===dataId)||customItems.find(c=>c.id===dataId&&c._category==='ribbon') ? 'ribbon' : 'flower';
+    document.getElementById('edit-name').value    = data.name    || '';
+    document.getElementById('edit-meaning').value = data.meaning || '';
+    document.getElementById('edit-origin').value  = data.origin  || '';
+    document.getElementById('edit-tags').value    = (data.tags||[]).join(', ');
+    if(data.imgUrl){
+      document.getElementById('edit-preview').src          = data.imgUrl;
+      document.getElementById('edit-preview').style.display= 'block';
+      document.getElementById('edit-drop-hint').textContent= 'Click to change image';
+      pendingB64 = data.imgUrl;
+      showB64Export(data.imgUrl);
+    } else if(data.svg){
+      // Render SVG as tiny preview
+      document.getElementById('edit-drop-hint').textContent = 'Uses built-in SVG — upload to replace';
+    }
+  } else {
+    // Add mode — pre-fill category from sidebar dropdown
+    const cat = document.getElementById('new-item-category').value;
+    document.getElementById('edit-category').value = cat;
+    document.getElementById('edit-name').value    = '';
+    document.getElementById('edit-meaning').value = '';
+    document.getElementById('edit-origin').value  = '';
+    document.getElementById('edit-tags').value    = '';
+  }
+
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function closeEditModal(){
+  document.getElementById('edit-modal').classList.remove('open');
+  pendingB64 = null;
+}
+
+function showB64Export(dataUrl){
+  document.getElementById('b64-section').style.display = 'block';
+  const display = document.getElementById('b64-display');
+  display.textContent = dataUrl;
+  display.style.display = 'block';
+}
+
+function copyB64(){
+  const txt = document.getElementById('b64-display').textContent;
+  if(!txt) return;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn = event.currentTarget;
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    setTimeout(()=>btn.textContent=orig, 2000);
+  }).catch(()=> alert('Copy failed — please select the text below manually.'));
+}
+
+// Edit modal file drop
+document.getElementById('edit-file-drop').addEventListener('click', ()=>{
+  document.getElementById('edit-file-input').click();
+});
+document.getElementById('edit-file-drop').addEventListener('keydown', e=>{
+  if(e.key==='Enter'||e.key===' ') document.getElementById('edit-file-input').click();
+});
+document.getElementById('edit-file-input').addEventListener('change', e=>{
+  if(!e.target.files[0]) return;
+  readFile(e.target.files[0], url=>{
+    pendingB64 = url;
+    document.getElementById('edit-preview').src = url;
+    document.getElementById('edit-preview').style.display = 'block';
+    document.getElementById('edit-drop-hint').textContent = 'Click to change image';
+    if(!document.getElementById('edit-name').value)
+      document.getElementById('edit-name').value = fileToLabel(e.target.files[0].name);
+    showB64Export(url);
+  });
+  e.target.value='';
 });
 
-document.getElementById('file-input').addEventListener('change', e => {
-  if (!e.target.files.length) return;
-  openUploadModal(e.target.files[0]);
-  e.target.value = ''; // reset so same file can be uploaded again
-});
-
-// Drag onto upload zone
-document.getElementById('upload-trigger').addEventListener('dragover', e => { e.preventDefault(); });
-document.getElementById('upload-trigger').addEventListener('drop', e => {
+// Drag onto drop zone inside modal
+document.getElementById('edit-file-drop').addEventListener('dragover', e=>e.preventDefault());
+document.getElementById('edit-file-drop').addEventListener('drop', e=>{
   e.preventDefault();
-  if (e.dataTransfer.files.length) openUploadModal(e.dataTransfer.files[0]);
-});
-
-// File drop inside modal
-document.getElementById('file-drop-zone').addEventListener('click', () => {
-  document.getElementById('modal-file-input').click();
-});
-document.getElementById('file-drop-zone').addEventListener('keydown', e => {
-  if (e.key === 'Enter' || e.key === ' ') document.getElementById('modal-file-input').click();
-});
-
-document.getElementById('modal-file-input').addEventListener('change', e => {
-  if (!e.target.files[0]) return;
-  readFileAsDataURL(e.target.files[0], url => {
-    pendingUploadDataURL = url;
-    document.getElementById('upload-preview').src = url;
-    document.getElementById('upload-preview').style.display = 'block';
-    document.getElementById('custom-name').value = fileNameToLabel(e.target.files[0].name);
+  const file = e.dataTransfer.files[0];
+  if(!file) return;
+  readFile(file, url=>{
+    pendingB64 = url;
+    document.getElementById('edit-preview').src = url;
+    document.getElementById('edit-preview').style.display = 'block';
+    document.getElementById('edit-drop-hint').textContent = 'Click to change image';
+    if(!document.getElementById('edit-name').value)
+      document.getElementById('edit-name').value = fileToLabel(file.name);
+    showB64Export(url);
   });
 });
 
-function openUploadModal(file) {
-  readFileAsDataURL(file, url => {
-    pendingUploadDataURL = url;
-    document.getElementById('upload-preview').src = url;
-    document.getElementById('upload-preview').style.display = 'block';
-    document.getElementById('custom-name').value    = fileNameToLabel(file.name);
-    document.getElementById('custom-meaning').value = '';
-    document.getElementById('custom-tags').value    = '';
-    document.getElementById('upload-modal').classList.add('open');
+function saveEditModal(){
+  const name    = document.getElementById('edit-name').value.trim();
+  const meaning = document.getElementById('edit-meaning').value.trim();
+  const origin  = document.getElementById('edit-origin').value.trim();
+  const tagsRaw = document.getElementById('edit-tags').value.trim();
+  const category= document.getElementById('edit-category').value;
+  const tags    = tagsRaw ? tagsRaw.split(',').map(t=>t.trim().toLowerCase()).filter(Boolean) : [];
+
+  if(!name){ alert('Please enter a name.'); return; }
+
+  if(editMode === 'edit' && editTargetId) {
+    // Find in all arrays and update in place
+    let target = FLOWERS.find(d=>d.id===editTargetId)
+      || RIBBONS.find(d=>d.id===editTargetId)
+      || customItems.find(d=>d.id===editTargetId);
+
+    if(target){
+      target.name    = name;
+      target.meaning = meaning || target.meaning;
+      target.origin  = origin  || target.origin;
+      target.tags    = tags;
+      if(pendingB64) target.imgUrl = pendingB64;
+
+      // Refresh tile in palette
+      const tile = document.querySelector(`.flower-tile[data-id="${editTargetId}"], .ribbon-tile[data-id="${editTargetId}"]`);
+      if(tile){
+        const cat = RIBBONS.find(r=>r.id===editTargetId) ? 'ribbon' : 'flower';
+        tile.replaceWith(makeTile(target, cat));
+      }
+
+      // Refresh any placed instances
+      items.filter(i=>i.data.id===editTargetId).forEach(i=>{
+        i.data = target;
+        const el = getEl(i.uuid);
+        if(el) setItemContent(el, i);
+      });
+
+      updateMeanings();
+    }
+  } else {
+    // Add new
+    if(!pendingB64){ alert('Please choose an image file.'); return; }
+    const newItem = {
+      id: 'custom-'+Date.now(),
+      name, meaning: meaning||'A personal addition — its meaning is yours to define.',
+      origin: origin||'Custom upload',
+      tags, imgUrl: pendingB64,
+      _category: category
+    };
+    customItems.push(newItem);
+    const targetPalette = category === 'ribbon' ? 'ribbon-palette' : 'flower-palette';
+    document.getElementById(targetPalette).appendChild(makeTile(newItem, category));
+  }
+
+  closeEditModal();
+}
+
+// ─────────────────────────────────────────
+//  LEFT PANEL UPLOAD SHORTCUT
+// ─────────────────────────────────────────
+document.getElementById('upload-trigger').addEventListener('click', ()=>{
+  openEditModal('add');
+});
+document.getElementById('upload-trigger').addEventListener('dragover', e=>e.preventDefault());
+document.getElementById('upload-trigger').addEventListener('drop', e=>{
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if(!file) return;
+  readFile(file, url=>{
+    pendingB64 = url;
+    document.getElementById('edit-preview').src = url;
+    document.getElementById('edit-preview').style.display='block';
+    document.getElementById('edit-drop-hint').textContent='Click to change image';
+    document.getElementById('edit-name').value = fileToLabel(file.name);
+    showB64Export(url);
+    document.getElementById('edit-modal').classList.add('open');
   });
-}
+});
 
-function closeUploadModal() {
-  document.getElementById('upload-modal').classList.remove('open');
-  document.getElementById('upload-preview').style.display = 'none';
-  document.getElementById('custom-name').value    = '';
-  document.getElementById('custom-meaning').value = '';
-  document.getElementById('custom-tags').value    = '';
-  pendingUploadDataURL = null;
-}
+// file-input in left panel (kept for mobile fallback)
+document.getElementById('file-input').addEventListener('change', e=>{
+  if(!e.target.files[0]) return;
+  readFile(e.target.files[0], url=>{
+    pendingB64 = url;
+    document.getElementById('edit-preview').src = url;
+    document.getElementById('edit-preview').style.display='block';
+    document.getElementById('edit-drop-hint').textContent='Click to change image';
+    document.getElementById('edit-name').value = fileToLabel(e.target.files[0].name);
+    showB64Export(url);
+    openEditModal('add');
+  });
+  e.target.value='';
+});
 
-function confirmUpload() {
-  if (!pendingUploadDataURL) { alert('Please choose an image first.'); return; }
-  const name    = document.getElementById('custom-name').value.trim()    || 'Custom Flower';
-  const meaning = document.getElementById('custom-meaning').value.trim() || 'A personal addition — its meaning is yours to define.';
-  const tagsRaw = document.getElementById('custom-tags').value.trim();
-  const tags    = tagsRaw
-    ? tagsRaw.split(',').map(t => t.trim().toLowerCase()).filter(Boolean)
-    : [];
-
-  const newItem = {
-    id:      'custom-' + Date.now(),
-    name, meaning, tags,
-    origin:  'Custom upload',
-    imgUrl:  pendingUploadDataURL
-  };
-
-  customItems.push(newItem);
-
-  // Add tile to flower palette
-  document.getElementById('flower-palette').appendChild(makeTile(newItem, false));
-
-  closeUploadModal();
-}
-
-// ════════════════════════════════════════
+// ─────────────────────────────────────────
 //  CARD MODAL
-// ════════════════════════════════════════
-function openCardModal() {
-  if (!items.length) { alert('Add some flowers to your bouquet first!'); return; }
-
+// ─────────────────────────────────────────
+function openCardModal(){
+  if(!items.length){ alert('Add some flowers first!'); return; }
   const name = document.getElementById('bouquet-name').value.trim() || 'My Bouquet';
   document.getElementById('card-title').textContent = name;
 
-  // Count duplicates
-  const counts = {};
-  items.forEach(i => { counts[i.data.id] = (counts[i.data.id] || 0) + 1; });
+  const counts={};
+  items.forEach(i=>{ counts[i.data.id]=(counts[i.data.id]||0)+1; });
+  const seen=new Set();
+  const unique=items.filter(i=>{ if(seen.has(i.data.id)) return false; seen.add(i.data.id); return true; });
 
-  // Unique items for display
-  const seen   = new Set();
-  const unique = items.filter(i => {
-    if (seen.has(i.data.id)) return false;
-    seen.add(i.data.id);
-    return true;
-  });
-
-  document.getElementById('card-body').innerHTML = unique.map(i => {
-    const d = i.data;
-    const n = counts[d.id];
-
-    let icon;
-    if (d.imgUrl) {
-      icon = `<img src="${d.imgUrl}" style="width:32px;height:32px;object-fit:contain;" alt="${d.name}">`;
-    } else if (d.svg) {
-      icon = d.svg.replace(/width="\d+" height="\d+"/g, 'width="32" height="32"');
-    } else {
-      icon = '✿';
-    }
-
-    const shortMeaning = d.meaning
-      ? d.meaning.slice(0, 150) + (d.meaning.length > 150 ? '…' : '')
-      : 'A personal addition.';
-
-    return `
-      <div class="card-flower-row">
-        <div class="card-flower-icon">${icon}</div>
-        <div class="card-flower-info">
-          <span class="name">${d.name}${n > 1 ? `<span class="count">×${n}</span>` : ''}</span>
-          <div class="meaning-short">${shortMeaning}</div>
-        </div>
-      </div>`;
+  document.getElementById('card-body').innerHTML = unique.map(i=>{
+    const d=i.data, n=counts[d.id];
+    let icon = d.imgUrl
+      ? `<img src="${d.imgUrl}" style="width:30px;height:30px;object-fit:contain;" alt="${d.name}">`
+      : (d.svg ? d.svg.replace(/width="\d+" height="\d+"/g,'width="30" height="30"') : '✿');
+    const short = d.meaning ? d.meaning.slice(0,140)+(d.meaning.length>140?'…':'') : 'A personal addition.';
+    return `<div class="card-flower-row">
+      <div class="card-flower-icon">${icon}</div>
+      <div class="card-flower-info">
+        <span class="name">${d.name}${n>1?`<span class="count">×${n}</span>`:''}</span>
+        <div class="meaning-short">${short}</div>
+      </div>
+    </div>`;
   }).join('');
 
   document.getElementById('card-modal').classList.add('open');
 }
 
-function closeCardModal() {
-  document.getElementById('card-modal').classList.remove('open');
-}
+function closeCardModal(){ document.getElementById('card-modal').classList.remove('open'); }
 
-// Close modals on backdrop click
-document.getElementById('card-modal').addEventListener('click', e => {
-  if (e.target === document.getElementById('card-modal')) closeCardModal();
+document.getElementById('card-modal').addEventListener('click', e=>{
+  if(e.target===document.getElementById('card-modal')) closeCardModal();
 });
-document.getElementById('upload-modal').addEventListener('click', e => {
-  if (e.target === document.getElementById('upload-modal')) closeUploadModal();
+document.getElementById('edit-modal').addEventListener('click', e=>{
+  if(e.target===document.getElementById('edit-modal')) closeEditModal();
 });
 
-// Close on Escape
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    closeCardModal();
-    closeUploadModal();
-  }
-});
-
-// ════════════════════════════════════════
+// ─────────────────────────────────────────
 //  SAVE IMAGES
-// ════════════════════════════════════════
-function loadHtml2Canvas(cb) {
-  if (window.html2canvas) { cb(); return; }
-  const s   = document.createElement('script');
-  s.src     = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-  s.onload  = cb;
-  s.onerror = () => alert('Could not load image export library. Try using a browser screenshot instead.');
+// ─────────────────────────────────────────
+function loadH2C(cb){
+  if(window.html2canvas){ cb(); return; }
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+  s.onload=cb;
+  s.onerror=()=>alert('Could not load export library — use a screenshot instead.');
   document.head.appendChild(s);
 }
 
-function saveCanvasImage() {
-  loadHtml2Canvas(() => {
-    html2canvas(canvas, { backgroundColor: '#ffffff', scale: 2, useCORS: true }).then(c => {
-      downloadCanvas(c, (document.getElementById('bouquet-name').value || 'bouquet') + '.png');
+function saveCanvasImage(){
+  loadH2C(()=>{
+    html2canvas(canvas,{backgroundColor:'#ffffff',scale:2,useCORS:true}).then(c=>{
+      dl(c,(document.getElementById('bouquet-name').value||'bouquet')+'.png');
     });
   });
 }
 
-function saveCardImage() {
-  loadHtml2Canvas(() => {
-    html2canvas(document.getElementById('card-inner'), {
-      backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--white').trim() || '#ffffff',
-      scale: 2
-    }).then(c => {
-      downloadCanvas(c, (document.getElementById('bouquet-name').value || 'bouquet') + '-card.png');
+function saveCardImage(){
+  loadH2C(()=>{
+    html2canvas(document.getElementById('card-inner'),{backgroundColor:'#ffffff',scale:2}).then(c=>{
+      dl(c,(document.getElementById('bouquet-name').value||'bouquet')+'-card.png');
     });
   });
 }
 
-function downloadCanvas(canvasEl, filename) {
-  const a      = document.createElement('a');
-  a.download   = filename;
-  a.href       = canvasEl.toDataURL('image/png');
-  a.click();
+function dl(canvasEl, name){
+  const a=document.createElement('a');
+  a.download=name; a.href=canvasEl.toDataURL('image/png'); a.click();
 }
 
-// ════════════════════════════════════════
-//  UTILITY
-// ════════════════════════════════════════
-function readFileAsDataURL(file, cb) {
-  const reader  = new FileReader();
-  reader.onload = ev => cb(ev.target.result);
-  reader.readAsDataURL(file);
-}
-
-function fileNameToLabel(filename) {
-  return filename.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
-}
-
-// ════════════════════════════════════════
+// ─────────────────────────────────────────
 //  INIT
-// ════════════════════════════════════════
+// ─────────────────────────────────────────
 buildPalette();
 updateHint();
 updateMeanings();
+initLayout();
 </script>
 </body>
 </html>
