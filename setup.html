@@ -3,239 +3,144 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bloom Builder — Image Setup Tool</title>
+<title>Bloom Builder — Image Setup</title>
 <link href="https://fonts.googleapis.com/css2?family=Over+the+Rainbow&family=Give+You+Glory&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #111;
-    --red: #cc1a1a;
-    --paper: #f7f4ef;
-    --paper2: #edeae3;
-    --faint: #bbb;
-    --white: #fff;
-    --green: #1a7a3a;
-    --shadow: 4px 4px 0 var(--ink);
+    --ink: #111; --red: #cc1a1a; --paper: #f7f4ef; --paper2: #edeae3;
+    --faint: #bbb; --white: #fff; --green: #1a7a3a; --shadow: 4px 4px 0 var(--ink);
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
-    font-family: 'Give You Glory', cursive;
-    background: var(--paper2);
-    color: var(--ink);
-    min-height: 100vh;
+    font-family: "Give You Glory", cursive;
+    background: var(--paper2); color: var(--ink); min-height: 100vh;
     background-image:
       linear-gradient(rgba(17,17,17,.05) 1px, transparent 1px),
       linear-gradient(90deg, rgba(17,17,17,.05) 1px, transparent 1px);
     background-size: 28px 28px;
   }
-
   header {
-    background: var(--ink);
-    color: var(--white);
-    padding: 1rem 2rem;
-    display: flex; align-items: center; gap: 1rem;
+    background: var(--ink); color: var(--white);
+    padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem;
     border-bottom: 4px solid var(--red);
   }
-
-  header h1 {
-    font-family: 'Over the Rainbow', cursive;
-    font-size: 1.8rem;
-    line-height: 1;
-  }
+  header h1 { font-family: "Over the Rainbow", cursive; font-size: 1.8rem; line-height: 1; }
   header h1 span { color: var(--red); }
-  header p { font-size: 0.78rem; opacity: .65; margin-top: .2rem; letter-spacing: .05em; }
-
+  header p { font-size: 0.78rem; opacity: .65; margin-top: .2rem; }
   .stamp {
-    width: 48px; height: 48px;
-    border: 2px solid var(--white);
-    border-radius: 50%;
+    width: 48px; height: 48px; border: 2px solid var(--white); border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-size: 22px; flex-shrink: 0;
     box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px var(--white);
   }
-
-  .page { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-
-  /* ── INTRO BOX ── */
+  .page { max-width: 1040px; margin: 0 auto; padding: 2rem 1.5rem 6rem; }
   .intro {
-    background: var(--white);
-    border: 2px solid var(--ink);
-    box-shadow: var(--shadow);
-    padding: 1.2rem 1.4rem;
-    margin-bottom: 2rem;
-    position: relative;
+    background: var(--white); border: 2px solid var(--ink);
+    box-shadow: var(--shadow); padding: 1.2rem 1.4rem; margin-bottom: 2rem; position: relative;
   }
   .intro::before, .intro::after {
-    content: ''; position: absolute;
-    width: 14px; height: 14px;
+    content: ""; position: absolute; width: 14px; height: 14px;
     border-color: var(--red); border-style: solid;
   }
-  .intro::before { top: 5px; left: 5px;  border-width: 2px 0 0 2px; }
+  .intro::before { top: 5px; left: 5px; border-width: 2px 0 0 2px; }
   .intro::after  { bottom: 5px; right: 5px; border-width: 0 2px 2px 0; }
-
-  .intro h2 {
-    font-family: 'Over the Rainbow', cursive;
-    font-size: 1.3rem; margin-bottom: .6rem;
-  }
+  .intro h2 { font-family: "Over the Rainbow", cursive; font-size: 1.25rem; margin-bottom: .65rem; }
   .intro ol { padding-left: 1.4rem; }
-  .intro li { margin-bottom: .4rem; line-height: 1.5; font-size: .95rem; }
+  .intro li { margin-bottom: .45rem; line-height: 1.55; font-size: .92rem; }
   .intro li strong { color: var(--red); }
   .intro .note {
-    margin-top: .8rem; padding: .6rem .8rem;
+    margin-top: .9rem; padding: .6rem .85rem;
     background: var(--paper2); border-left: 3px solid var(--red);
-    font-size: .82rem; line-height: 1.5; color: #444;
+    font-size: .8rem; line-height: 1.55; color: #444;
   }
-
-  /* ── SECTION TITLE ── */
   .section-title {
-    font-family: 'Over the Rainbow', cursive;
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
-    padding-bottom: .4rem;
-    border-bottom: 2px solid var(--ink);
+    font-family: "Over the Rainbow", cursive; font-size: 1.3rem;
+    margin-bottom: 1rem; padding-bottom: .4rem; border-bottom: 2px solid var(--ink);
     display: flex; align-items: center; gap: .5rem;
   }
   .section-title::after {
-    content: '';
-    flex: 1; height: 2px;
+    content: ""; flex: 1; height: 2px;
     background: repeating-linear-gradient(
       90deg, var(--faint) 0, var(--faint) 5px, transparent 5px, transparent 10px
     );
   }
-
-  /* ── SLOTS GRID ── */
   .slots-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 14px;
-    margin-bottom: 2.5rem;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    gap: 13px; margin-bottom: 2.5rem;
   }
-
   .slot {
-    background: var(--white);
-    border: 2px solid var(--ink);
-    box-shadow: var(--shadow);
-    padding: 10px 8px 8px;
-    text-align: center;
-    position: relative;
+    background: var(--white); border: 2px solid var(--ink);
+    box-shadow: var(--shadow); padding: 9px 7px 7px;
+    text-align: center; position: relative;
     transition: box-shadow .1s, transform .1s;
   }
-
   .slot.has-image { border-color: var(--green); box-shadow: 4px 4px 0 var(--green); }
   .slot.drag-over { border-color: var(--red); box-shadow: 4px 4px 0 var(--red); transform: scale(1.03); }
-
-  /* Drop zone inside slot */
   .slot-drop {
-    width: 100%; aspect-ratio: 1;
-    background: var(--paper);
+    width: 100%; aspect-ratio: 1; background: var(--paper);
     border: 2px dashed var(--faint);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: border-color .15s, background .15s;
-    margin-bottom: 6px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; position: relative; overflow: hidden;
+    transition: border-color .15s, background .15s; margin-bottom: 6px;
   }
-  .slot-drop:hover, .slot.drag-over .slot-drop {
-    border-color: var(--red);
-    background: #fdf0f0;
-  }
-
+  .slot-drop:hover, .slot.drag-over .slot-drop { border-color: var(--red); background: #fdf0f0; }
   .slot-drop img {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: contain;
-    padding: 4px;
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: contain; padding: 4px;
   }
-
   .slot-drop .drop-hint {
-    font-size: .72rem; color: var(--faint);
-    line-height: 1.4; padding: .4rem;
-    pointer-events: none;
+    font-size: .7rem; color: var(--faint); line-height: 1.45;
+    padding: .4rem; pointer-events: none; text-align: center;
   }
-  .slot-drop .drop-icon { font-size: 1.6rem; display: block; opacity: .35; margin-bottom: .2rem; }
-
-  /* Hidden when image present */
+  .drop-icon { font-size: 1.5rem; display: block; opacity: .3; margin-bottom: .2rem; }
   .slot.has-image .drop-hint { display: none; }
-
-  .slot-name {
-    font-family: 'Give You Glory', cursive;
-    font-size: .75rem; color: var(--ink);
-    margin-bottom: 4px;
-    line-height: 1.2;
+  /* show SVG preview when no image uploaded */
+  .svg-preview {
+    position: absolute; inset: 0; display: flex;
+    align-items: center; justify-content: center;
+    pointer-events: none; padding: 6px;
   }
-
-  .slot-status {
-    font-size: .62rem;
-    font-family: 'Give You Glory', cursive;
-    color: var(--faint);
-  }
+  .svg-preview svg { width: 60px; height: 60px; opacity: .55; }
+  .slot.has-image .svg-preview { display: none; }
+  .slot-name { font-size: .72rem; color: var(--ink); margin-bottom: 3px; line-height: 1.2; }
+  .slot-status { font-size: .6rem; color: var(--faint); }
   .slot.has-image .slot-status { color: var(--green); }
-
-  /* Clear button */
   .slot-clear {
-    position: absolute; top: 4px; right: 4px;
-    background: var(--ink); color: var(--white);
-    border: none; font-size: .6rem;
-    padding: 1px 5px; cursor: pointer;
-    font-family: 'Give You Glory', cursive;
-    display: none; z-index: 2;
+    position: absolute; top: 3px; right: 3px;
+    background: var(--ink); color: var(--white); border: none;
+    font-size: .55rem; padding: 1px 5px; cursor: pointer;
+    font-family: "Give You Glory", cursive; display: none; z-index: 2;
   }
   .slot.has-image .slot-clear { display: block; }
   .slot-clear:hover { background: var(--red); }
-
-  /* Hidden file inputs */
   .slot-file { display: none; }
-
-  /* ── BOTTOM BAR ── */
   .bottom-bar {
-    position: sticky; bottom: 0;
-    background: var(--white);
-    border-top: 2px solid var(--ink);
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--white); border-top: 2px solid var(--ink);
     box-shadow: 0 -3px 0 var(--ink);
-    padding: .9rem 1.5rem;
-    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
-    z-index: 50;
+    padding: .85rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; z-index: 50;
   }
-
-  .progress-text {
-    font-family: 'Give You Glory', cursive;
-    font-size: .9rem; color: var(--ink);
-    flex: 1;
-  }
-  .progress-text strong { color: var(--red); font-family: 'Over the Rainbow', cursive; }
-
+  .progress-text { font-size: .9rem; flex: 1; }
+  .progress-text strong { color: var(--red); font-family: "Over the Rainbow", cursive; }
   .btn {
-    font-family: 'Over the Rainbow', cursive;
-    font-size: 1rem;
-    padding: .5rem 1.2rem;
-    border: 2px solid var(--ink);
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    background: var(--white); color: var(--ink);
+    font-family: "Over the Rainbow", cursive; font-size: 1rem;
+    padding: .45rem 1.1rem; border: 2px solid var(--ink); cursor: pointer;
+    box-shadow: var(--shadow); background: var(--white); color: var(--ink);
     transition: transform .08s, box-shadow .08s;
   }
   .btn:hover  { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
-  .btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 var(--ink); }
-  .btn-green  { background: var(--green); color: var(--white); border-color: #0f5a2a; box-shadow: 4px 4px 0 #0f5a2a; }
+  .btn:active { transform: translate(1px,1px);   box-shadow: 1px 1px 0 var(--ink); }
+  .btn-green { background: var(--green); color: var(--white); border-color: #0f5a2a; box-shadow: 4px 4px 0 #0f5a2a; }
   .btn-green:hover { box-shadow: 6px 6px 0 #0f5a2a; }
-  .btn-red    { background: var(--red); color: var(--white); border-color: #991010; box-shadow: 4px 4px 0 #991010; }
-
-  /* ── SUCCESS MESSAGE ── */
   .success-banner {
-    display: none;
-    background: var(--green);
-    color: var(--white);
-    border: 2px solid #0f5a2a;
-    padding: .9rem 1.2rem;
-    margin: 1.5rem 0;
-    font-size: .95rem;
-    line-height: 1.6;
-    box-shadow: 4px 4px 0 #0f5a2a;
+    display: none; background: var(--green); color: var(--white);
+    border: 2px solid #0f5a2a; padding: .9rem 1.2rem; margin: 1.5rem 0;
+    font-size: .92rem; line-height: 1.65; box-shadow: 4px 4px 0 #0f5a2a;
   }
   .success-banner.visible { display: block; }
-  .success-banner strong { font-family: 'Over the Rainbow', cursive; font-size: 1.1rem; }
+  .success-banner strong { font-family: "Over the Rainbow", cursive; font-size: 1.05rem; }
+  code { background: rgba(255,255,255,.25); padding: 1px 5px; font-size: .85em; }
 </style>
 </head>
 <body>
@@ -243,287 +148,673 @@
 <header>
   <div class="stamp">✿</div>
   <div>
-    <h1><span>Bloom</span> Builder — Image Setup</h1>
-    <p>One-time tool to swap flower images. Use this once, then upload the result to GitHub.</p>
+    <h1><span>Bloom</span> Builder &mdash; Image Setup</h1>
+    <p>Open this file on its own. No other files needed.</p>
   </div>
 </header>
 
 <div class="page">
-
   <div class="intro">
-    <h2>How this works</h2>
+    <h2>How to use this tool</h2>
     <ol>
-      <li>For each flower, ribbon, or wrap below — <strong>click its box</strong> or <strong>drag an image onto it</strong> to set a picture.</li>
-      <li>You can skip any you're happy leaving as-is. Ones you skip keep their existing drawing.</li>
-      <li>When you're done, click <strong>Download data.js</strong> at the bottom.</li>
-      <li>In your GitHub repository, delete the old <strong>data.js</strong> and upload this new one. That's it — your images are live for everyone.</li>
+      <li>For each flower or ribbon below &mdash; <strong>click its box</strong> or <strong>drag an image file onto it</strong>. PNG, JPG, and SVG all work.</li>
+      <li>Skip any you want to leave as the existing pencil drawing.</li>
+      <li>When you&rsquo;re ready, click <strong>&ldquo;Download data.js&rdquo;</strong> at the bottom of the page.</li>
+      <li>Go to your GitHub repository &rarr; click the existing <code>data.js</code> file &rarr; click the <strong>pencil (edit) icon</strong> &rarr; select all the text and delete it &rarr; paste in the contents of your downloaded file &rarr; click <strong>Commit changes</strong>.</li>
+      <li>Your website updates within about 60 seconds. Everyone who visits will see the new images &mdash; permanently.</li>
     </ol>
     <div class="note">
-      ⓘ Images are embedded directly into the file, so nothing gets lost on refresh and no extra image files are needed.
-      PNG, JPG, and SVG all work. Smaller files (under 500kb each) are recommended so the page loads fast.
+      &rarr; <strong>File size tip:</strong> Keep images under 500&thinsp;kb each for fast loading.
+      Free tool to compress: <strong>squoosh.app</strong> &mdash; just open it in your browser, drop your image, and download a smaller version.
     </div>
   </div>
 
   <div class="success-banner" id="success-banner">
-    <strong>✓ data.js downloaded!</strong><br>
-    Now go to your GitHub repository → find the existing <code>data.js</code> → click it → click the pencil icon →
-    select "Delete file" and commit, then upload this new file. Your images will be live within 60 seconds.
+    <strong>&#10003; data.js downloaded!</strong><br>
+    Now: GitHub &rarr; your repository &rarr; click <code>data.js</code> &rarr; pencil icon (edit) &rarr;
+    select all text (Ctrl+A) &rarr; delete &rarr; paste your new file contents &rarr; <strong>Commit changes</strong>.
+    The live website updates in about 60 seconds.
   </div>
 
-  <div class="section-title">🌸 Flowers</div>
+  <div class="section-title">&#127800; Flowers</div>
   <div class="slots-grid" id="flower-slots"></div>
 
-  <div class="section-title">🎀 Ribbons &amp; Wraps</div>
+  <div class="section-title">&#127872; Ribbons &amp; Wraps</div>
   <div class="slots-grid" id="ribbon-slots"></div>
-
-</div><!-- /page -->
+</div>
 
 <div class="bottom-bar">
   <div class="progress-text" id="progress-text">0 images assigned</div>
   <button class="btn" onclick="clearAll()">Clear All</button>
-  <button class="btn btn-green" onclick="downloadDataJs()">⬇ Download data.js</button>
+  <button class="btn btn-green" onclick="downloadDataJs()">&#11015; Download data.js</button>
 </div>
 
-<!-- The existing data.js must be loaded so we can read the existing content -->
-<script src="data.js"></script>
 <script>
-// ─────────────────────────────────────────
-//  IMAGE STORE — keyed by item id
-//  { id: { dataUrl, filename } }
-// ─────────────────────────────────────────
+// ── HARDCODED DATA (no external file needed) ──
+const FLOWER_META = [
+  {
+    "id": "rose-red",
+    "name": "Red Rose",
+    "tags": [
+      "love"
+    ],
+    "meaning": "Deep romantic love and desire. Red roses have symbolized passion since Ancient Greece — associated with Aphrodite and later the Virgin Mary. Giving a single red rose is one of the oldest and most recognized declarations of love in the world.",
+    "origin": "Ancient Greek & Roman tradition"
+  },
+  {
+    "id": "rose-yellow",
+    "name": "Yellow Rose",
+    "tags": [
+      "joy",
+      "loyalty"
+    ],
+    "meaning": "Friendship, warmth, and platonic love. Unlike red roses, yellow roses carry no romantic overtones — they celebrate caring and joy between friends. In the Victorian language of flowers they sometimes meant jealousy, but today they are universally read as cheerful and warm.",
+    "origin": "Victorian floriography"
+  },
+  {
+    "id": "peony",
+    "name": "Peony",
+    "tags": [
+      "love",
+      "joy"
+    ],
+    "meaning": "Prosperity, romance, and honor. In Chinese culture the peony is the \"king of flowers,\" representing wealth and good fortune. In Western tradition it stands for a happy marriage and is the birth flower of November. It's the state flower of Indiana and one of the most popular wedding flowers.",
+    "origin": "Chinese Tang dynasty, Victorian tradition"
+  },
+  {
+    "id": "lavender",
+    "name": "Lavender",
+    "tags": [
+      "loyalty",
+      "mystery"
+    ],
+    "meaning": "Devotion, calm, and distrust. Lavender holds a dual symbolism: it represents serenity and faithful love, but in the Victorian language of flowers it also historically carried the meaning \"I don't fully trust you.\" The plant has been used medicinally and ritually since ancient Egypt for purification.",
+    "origin": "Ancient Egypt, Victorian floriography"
+  },
+  {
+    "id": "lily-white",
+    "name": "White Lily",
+    "tags": [
+      "hope",
+      "grief"
+    ],
+    "meaning": "Purity, renewal, and the soul restored to innocence. White lilies are central to Christian Easter symbolism — they represent resurrection. They are also traditional funeral flowers across many Western cultures, placed on graves to signify that the departed soul has been returned to purity.",
+    "origin": "Christian symbolism, ancient Greek mythology"
+  },
+  {
+    "id": "forget-me-not",
+    "name": "Forget-Me-Not",
+    "tags": [
+      "memory",
+      "love"
+    ],
+    "meaning": "True love and remembrance. According to German medieval legend, a knight picking these flowers by a river was swept away by the current, crying \"Vergiss mein nicht!\" (forget me not!). They are worn to remember those who have died and are the official symbol of Alzheimer's Disease International.",
+    "origin": "German medieval legend, 15th century"
+  },
+  {
+    "id": "tulip-red",
+    "name": "Red Tulip",
+    "tags": [
+      "love"
+    ],
+    "meaning": "A declaration of love — \"believe me, I love you.\" Tulips originated in Central Asia and were wildly coveted in Ottoman Turkey. The red variety specifically means passion and perfect love. During Tulipomania in 1630s Holland, single bulbs sold for the price of a house.",
+    "origin": "Ottoman Empire, 17th century Netherlands"
+  },
+  {
+    "id": "tulip-purple",
+    "name": "Purple Tulip",
+    "tags": [
+      "mystery",
+      "love"
+    ],
+    "meaning": "Royalty and admiration. Purple flowers are historically rare in nature, making purple tulips symbols of nobility and prestige. In the Victorian language of flowers they mean \"I admire you\" — a more dignified, considered declaration than the boldness of the red tulip.",
+    "origin": "Victorian floriography"
+  },
+  {
+    "id": "daisy",
+    "name": "Daisy",
+    "tags": [
+      "hope",
+      "joy"
+    ],
+    "meaning": "Innocence, new beginnings, and loyal love. The name comes from Old English \"dæges ēage\" — the day's eye — because it opens at dawn. Daisies symbolize \"I'll never tell\" in floriography and appear in Celtic mythology as the flowers of new mothers, sprung from the stars.",
+    "origin": "Old English folklore, Celtic mythology"
+  },
+  {
+    "id": "sunflower",
+    "name": "Sunflower",
+    "tags": [
+      "loyalty",
+      "joy"
+    ],
+    "meaning": "Adoration and unwavering faith. Young sunflowers track the sun via heliotropism — in Greek myth this mirrors Clytie's eternal devotion to Apollo. They also symbolize long life in Chinese culture, and the sunflower is Ukraine's national flower, representing peace and resilience.",
+    "origin": "Ancient Greek mythology, Aztec culture"
+  },
+  {
+    "id": "cherry-blossom",
+    "name": "Cherry Blossom",
+    "tags": [
+      "joy",
+      "grief"
+    ],
+    "meaning": "The beauty of impermanence. In Japan (sakura) they embody mono no aware — \"the pathos of things\" — because they bloom for only one to two weeks before falling. Samurai embraced them as a metaphor for life's brief, fierce beauty. Hanami (flower-viewing parties) have been held for over a thousand years.",
+    "origin": "Japanese Shinto tradition, samurai culture"
+  },
+  {
+    "id": "iris",
+    "name": "Blue Iris",
+    "tags": [
+      "hope",
+      "loyalty"
+    ],
+    "meaning": "Hope, courage, and wisdom. Named after the Greek goddess of the rainbow, who was a messenger between heaven and earth. The iris is the basis of France's fleur-de-lis and the national symbol of France. Blue irises represent faith and hope, and were traditionally placed on the graves of French soldiers.",
+    "origin": "Ancient Greece, French heraldry"
+  },
+  {
+    "id": "carnation-pink",
+    "name": "Pink Carnation",
+    "tags": [
+      "love",
+      "memory"
+    ],
+    "meaning": "A mother's undying love. In Christian legend, pink carnations first bloomed where the Virgin Mary's tears fell at the crucifixion. Anna Jarvis wore one at the first official Mother's Day service in 1907, and since then pink carnations have become the worldwide symbol of motherhood.",
+    "origin": "Christian legend, Mother's Day 1907"
+  },
+  {
+    "id": "magnolia",
+    "name": "Magnolia",
+    "tags": [
+      "hope",
+      "loyalty"
+    ],
+    "meaning": "Dignity, nobility, and perseverance. Magnolias are among the oldest flowering plants on Earth — they evolved ~95 million years ago before bees existed, pollinated by beetles. In the American South they symbolize endurance. In China they represent purity of spirit and are associated with the Tang dynasty court.",
+    "origin": "Chinese Tang dynasty, Southern US folklore"
+  },
+  {
+    "id": "poppy-red",
+    "name": "Red Poppy",
+    "tags": [
+      "memory",
+      "grief"
+    ],
+    "meaning": "Remembrance of fallen soldiers. Poppies grew wild over the disturbed soil of WWI battlefields in Flanders, Belgium. After Lieutenant Colonel John McCrae's 1915 poem \"In Flanders Fields,\" the red poppy became the international symbol of wartime sacrifice. Worn every November 11th (Remembrance Day).",
+    "origin": "John McCrae, 1915 — Flanders, Belgium"
+  },
+  {
+    "id": "chrysanthemum",
+    "name": "Chrysanthemum",
+    "tags": [
+      "loyalty",
+      "grief"
+    ],
+    "meaning": "Long life and fidelity in Asia — but grief in Europe. In Japan it is the Imperial family's emblem, symbolizing longevity and rebirth. In China it represents autumn and renewal. In France, Italy, and Belgium it is strictly a funeral flower, placed on graves. Context matters enormously with this one.",
+    "origin": "Chinese cultivation c. 15th century BC"
+  }
+];
+
+const RIBBON_META = [
+  {
+    "id": "ribbon-red",
+    "name": "Red Ribbon",
+    "tags": [
+      "love"
+    ],
+    "meaning": "Passion and love, tied together."
+  },
+  {
+    "id": "ribbon-simple",
+    "name": "Simple Bow",
+    "tags": [
+      "joy"
+    ],
+    "meaning": "A neat, thoughtful finish."
+  },
+  {
+    "id": "ribbon-double",
+    "name": "Double Bow",
+    "tags": [
+      "joy"
+    ],
+    "meaning": "Extra care and celebration."
+  },
+  {
+    "id": "wrap-kraft",
+    "name": "Kraft Wrap",
+    "tags": [
+      "loyalty"
+    ],
+    "meaning": "Rustic and handmade — the charm of something wrapped with care."
+  },
+  {
+    "id": "wrap-newsprint",
+    "name": "Newsprint Wrap",
+    "tags": [
+      "memory"
+    ],
+    "meaning": "Old-fashioned, unpretentious, full of character."
+  },
+  {
+    "id": "wrap-white",
+    "name": "White Wrap",
+    "tags": [
+      "hope"
+    ],
+    "meaning": "Clean, minimal, and quietly elegant."
+  }
+];
+
+const SVG_MAP = {
+  "rose-red": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,46)\">\n        <path d=\"M0,0 Q-4,14 -3,30\" stroke=\"#333\" stroke-width=\"2.5\" fill=\"none\"/>\n        <path d=\"M-3,20 Q-14,14 -12,6 Q-7,14 -3,20\" fill=\"#555\"/>\n        <ellipse cx=\"-11\" cy=\"-11\" rx=\"10\" ry=\"7\" fill=\"#111\" opacity=\".85\" transform=\"rotate(-30,-11,-11)\"/>\n        <ellipse cx=\"11\" cy=\"-11\" rx=\"10\" ry=\"7\" fill=\"#222\" opacity=\".85\" transform=\"rotate(30,11,-11)\"/>\n        <ellipse cx=\"0\" cy=\"-20\" rx=\"9\" ry=\"7\" fill=\"#333\" opacity=\".9\"/>\n        <ellipse cx=\"-8\" cy=\"-5\" rx=\"9\" ry=\"6\" fill=\"#111\"/>\n        <ellipse cx=\"8\" cy=\"-5\" rx=\"9\" ry=\"6\" fill=\"#222\"/>\n        <circle cx=\"0\" cy=\"-11\" r=\"6\" fill=\"#000\"/>\n        <circle cx=\"-1\" cy=\"-12\" r=\"2\" fill=\"#444\"/>\n      </g>\n    </svg>",
+  "rose-yellow": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,46)\">\n        <path d=\"M0,0 Q-4,14 -3,30\" stroke=\"#333\" stroke-width=\"2.5\" fill=\"none\"/>\n        <path d=\"M-3,20 Q-14,14 -12,6 Q-7,14 -3,20\" fill=\"#555\"/>\n        <ellipse cx=\"-11\" cy=\"-11\" rx=\"10\" ry=\"7\" fill=\"#aaa\" opacity=\".85\" transform=\"rotate(-30,-11,-11)\"/>\n        <ellipse cx=\"11\" cy=\"-11\" rx=\"10\" ry=\"7\" fill=\"#999\" opacity=\".85\" transform=\"rotate(30,11,-11)\"/>\n        <ellipse cx=\"0\" cy=\"-20\" rx=\"9\" ry=\"7\" fill=\"#ccc\" opacity=\".9\"/>\n        <ellipse cx=\"-8\" cy=\"-5\" rx=\"9\" ry=\"6\" fill=\"#aaa\"/>\n        <ellipse cx=\"8\" cy=\"-5\" rx=\"9\" ry=\"6\" fill=\"#bbb\"/>\n        <circle cx=\"0\" cy=\"-11\" r=\"6\" fill=\"#666\"/>\n        <circle cx=\"-1\" cy=\"-12\" r=\"2\" fill=\"#888\"/>\n      </g>\n    </svg>",
+  "peony": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,46)\">\n        <path d=\"M0,0 Q4,12 2,28\" stroke=\"#333\" stroke-width=\"2.5\" fill=\"none\"/>\n        <path d=\"M2,16 Q12,10 14,4 Q8,12 2,16\" fill=\"#555\"/>\n        <circle cx=\"0\" cy=\"-14\" r=\"16\" fill=\"#ccc\" opacity=\".4\"/>\n        <ellipse cx=\"-10\" cy=\"-18\" rx=\"8\" ry=\"6\" fill=\"#aaa\" transform=\"rotate(-20,-10,-18)\"/>\n        <ellipse cx=\"10\" cy=\"-18\" rx=\"8\" ry=\"6\" fill=\"#999\" transform=\"rotate(20,10,-18)\"/>\n        <ellipse cx=\"-14\" cy=\"-10\" rx=\"7\" ry=\"5\" fill=\"#bbb\" transform=\"rotate(-60,-14,-10)\"/>\n        <ellipse cx=\"14\" cy=\"-10\" rx=\"7\" ry=\"5\" fill=\"#aaa\" transform=\"rotate(60,14,-10)\"/>\n        <ellipse cx=\"0\" cy=\"-23\" rx=\"7\" ry=\"5\" fill=\"#ddd\"/>\n        <circle cx=\"0\" cy=\"-14\" r=\"7\" fill=\"#eee\"/>\n        <circle cx=\"-2\" cy=\"-15\" r=\"3\" fill=\"#bbb\"/>\n        <circle cx=\"2\" cy=\"-13\" r=\"2.5\" fill=\"#ccc\"/>\n      </g>\n    </svg>",
+  "lavender": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,52)\">\n        <line x1=\"0\" y1=\"0\" x2=\"0\" y2=\"28\" stroke=\"#333\" stroke-width=\"2\"/>\n        <path d=\"M0,10 Q-10,5 -10,-2 Q-6,5 0,10\" fill=\"#555\"/>\n        <path d=\"M0,10 Q10,5 10,-2 Q6,5 0,10\" fill=\"#555\"/>\n        <ellipse cx=\"-3\" cy=\"-5\" rx=\"4\" ry=\"6\" fill=\"#666\" opacity=\".85\"/>\n        <ellipse cx=\"3\" cy=\"-8\" rx=\"4\" ry=\"6\" fill=\"#444\" opacity=\".85\"/>\n        <ellipse cx=\"-3\" cy=\"-16\" rx=\"3.5\" ry=\"5\" fill=\"#777\" opacity=\".9\"/>\n        <ellipse cx=\"3\" cy=\"-20\" rx=\"3\" ry=\"5\" fill=\"#555\" opacity=\".9\"/>\n        <ellipse cx=\"0\" cy=\"-27\" rx=\"2.5\" ry=\"4\" fill=\"#888\"/>\n      </g>\n    </svg>",
+  "lily-white": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,48)\">\n        <path d=\"M0,0 Q-3,12 -2,28\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M-2,18 Q-12,12 -10,6\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"none\"/>\n        <ellipse cx=\"-4\" cy=\"-20\" rx=\"5\" ry=\"14\" fill=\"#eee\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(-25,-4,-20)\"/>\n        <ellipse cx=\"4\" cy=\"-20\" rx=\"5\" ry=\"14\" fill=\"#eee\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(25,4,-20)\"/>\n        <ellipse cx=\"-12\" cy=\"-12\" rx=\"5\" ry=\"14\" fill=\"#e8e8e8\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(-65,-12,-12)\"/>\n        <ellipse cx=\"12\" cy=\"-12\" rx=\"5\" ry=\"14\" fill=\"#e8e8e8\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(65,12,-12)\"/>\n        <ellipse cx=\"0\" cy=\"-22\" rx=\"5\" ry=\"14\" fill=\"#eee\" stroke=\"#999\" stroke-width=\".8\"/>\n        <line x1=\"-2\" y1=\"-12\" x2=\"-4\" y2=\"-22\" stroke=\"#666\" stroke-width=\"1\"/>\n        <line x1=\"0\" y1=\"-12\" x2=\"0\" y2=\"-24\" stroke=\"#666\" stroke-width=\"1\"/>\n        <line x1=\"2\" y1=\"-12\" x2=\"4\" y2=\"-22\" stroke=\"#666\" stroke-width=\"1\"/>\n        <circle cx=\"-4\" cy=\"-23\" r=\"1.5\" fill=\"#888\"/>\n        <circle cx=\"0\" cy=\"-25\" r=\"1.5\" fill=\"#888\"/>\n        <circle cx=\"4\" cy=\"-23\" r=\"1.5\" fill=\"#888\"/>\n      </g>\n    </svg>",
+  "forget-me-not": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,52)\">\n        <path d=\"M0,0 Q-4,12 -4,26\" stroke=\"#333\" stroke-width=\"1.5\" fill=\"none\"/>\n        <path d=\"M-4,16 Q-12,12 -12,6\" stroke=\"#555\" stroke-width=\"1.2\" fill=\"none\"/>\n        <g transform=\"translate(-6,-14)\">\n          <circle cx=\"0\" cy=\"-5\" r=\"3\" fill=\"#666\"/>\n          <circle cx=\"4.3\" cy=\"-2.5\" r=\"3\" fill=\"#777\"/>\n          <circle cx=\"4.3\" cy=\"2.5\" r=\"3\" fill=\"#666\"/>\n          <circle cx=\"0\" cy=\"5\" r=\"3\" fill=\"#777\"/>\n          <circle cx=\"-4.3\" cy=\"2.5\" r=\"3\" fill=\"#666\"/>\n          <circle cx=\"-4.3\" cy=\"-2.5\" r=\"3\" fill=\"#777\"/>\n          <circle cx=\"0\" cy=\"0\" r=\"2\" fill=\"#eee\"/>\n        </g>\n        <g transform=\"translate(4,-26)\">\n          <circle cx=\"0\" cy=\"-5\" r=\"2.5\" fill=\"#666\"/>\n          <circle cx=\"3.5\" cy=\"-2\" r=\"2.5\" fill=\"#888\"/>\n          <circle cx=\"3.5\" cy=\"2\" r=\"2.5\" fill=\"#666\"/>\n          <circle cx=\"0\" cy=\"5\" r=\"2.5\" fill=\"#888\"/>\n          <circle cx=\"-3.5\" cy=\"2\" r=\"2.5\" fill=\"#666\"/>\n          <circle cx=\"-3.5\" cy=\"-2\" r=\"2.5\" fill=\"#888\"/>\n          <circle cx=\"0\" cy=\"0\" r=\"1.8\" fill=\"#eee\"/>\n        </g>\n      </g>\n    </svg>",
+  "tulip-red": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,50)\">\n        <path d=\"M0,0 Q2,10 1,28\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M1,18 Q10,14 12,8 Q6,14 1,18\" fill=\"#555\"/>\n        <path d=\"M-10,-8 Q-12,-22 0,-28 Q12,-22 10,-8 Q5,0 0,2 Q-5,0 -10,-8Z\" fill=\"#222\"/>\n        <path d=\"M0,-28 Q0,-10 0,2\" stroke=\"#555\" stroke-width=\"1\" fill=\"none\" opacity=\".5\"/>\n        <path d=\"M-10,-8 Q-6,-18 0,-22 Q-8,-16 -10,-8\" fill=\"#555\" opacity=\".4\"/>\n      </g>\n    </svg>",
+  "tulip-purple": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,50)\">\n        <path d=\"M0,0 Q2,10 1,28\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M1,18 Q10,14 12,8 Q6,14 1,18\" fill=\"#555\"/>\n        <path d=\"M-10,-8 Q-12,-22 0,-28 Q12,-22 10,-8 Q5,0 0,2 Q-5,0 -10,-8Z\" fill=\"#444\"/>\n        <path d=\"M0,-28 Q0,-10 0,2\" stroke=\"#777\" stroke-width=\"1\" fill=\"none\" opacity=\".5\"/>\n        <path d=\"M-10,-8 Q-6,-18 0,-22 Q-8,-16 -10,-8\" fill=\"#888\" opacity=\".35\"/>\n      </g>\n    </svg>",
+  "daisy": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,46)\">\n        <path d=\"M0,0 Q-2,12 -1,28\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M-1,18 Q-10,14 -10,8\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"none\"/>\n        <ellipse cx=\"0\" cy=\"-20\" rx=\"3.5\" ry=\"8\" fill=\"#fff\" stroke=\"#999\" stroke-width=\".8\"/>\n        <ellipse cx=\"14\" cy=\"-14\" rx=\"3.5\" ry=\"8\" fill=\"#fff\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(60,14,-14)\"/>\n        <ellipse cx=\"14\" cy=\"-6\" rx=\"3.5\" ry=\"8\" fill=\"#fff\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(120,14,-6)\"/>\n        <ellipse cx=\"0\" cy=\"0\" rx=\"3.5\" ry=\"8\" fill=\"#fff\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(180,0,0)\"/>\n        <ellipse cx=\"-14\" cy=\"-6\" rx=\"3.5\" ry=\"8\" fill=\"#fff\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(-120,-14,-6)\"/>\n        <ellipse cx=\"-14\" cy=\"-14\" rx=\"3.5\" ry=\"8\" fill=\"#fff\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(-60,-14,-14)\"/>\n        <circle cx=\"0\" cy=\"-12\" r=\"7\" fill=\"#bbb\"/>\n        <circle cx=\"0\" cy=\"-12\" r=\"4\" fill=\"#888\"/>\n      </g>\n    </svg>",
+  "sunflower": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,46)\">\n        <path d=\"M0,0 Q-2,12 -1,28\" stroke=\"#333\" stroke-width=\"2.5\" fill=\"none\"/>\n        <path d=\"M-1,16 Q-12,10 -12,4\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"none\"/>\n        <ellipse cx=\"0\" cy=\"-22\" rx=\"4\" ry=\"10\" fill=\"#ccc\"/>\n        <ellipse cx=\"15\" cy=\"-16\" rx=\"4\" ry=\"10\" fill=\"#bbb\" transform=\"rotate(52,15,-16)\"/>\n        <ellipse cx=\"19\" cy=\"-3\" rx=\"4\" ry=\"10\" fill=\"#ccc\" transform=\"rotate(104,19,-3)\"/>\n        <ellipse cx=\"12\" cy=\"10\" rx=\"4\" ry=\"10\" fill=\"#bbb\" transform=\"rotate(156,12,10)\"/>\n        <ellipse cx=\"-12\" cy=\"10\" rx=\"4\" ry=\"10\" fill=\"#ccc\" transform=\"rotate(-156,-12,10)\"/>\n        <ellipse cx=\"-19\" cy=\"-3\" rx=\"4\" ry=\"10\" fill=\"#bbb\" transform=\"rotate(-104,-19,-3)\"/>\n        <ellipse cx=\"-15\" cy=\"-16\" rx=\"4\" ry=\"10\" fill=\"#ccc\" transform=\"rotate(-52,-15,-16)\"/>\n        <circle cx=\"0\" cy=\"-10\" r=\"10\" fill=\"#222\"/>\n        <circle cx=\"0\" cy=\"-10\" r=\"7\" fill=\"#111\"/>\n        <circle cx=\"-2\" cy=\"-12\" r=\"1.5\" fill=\"#444\" opacity=\".8\"/>\n        <circle cx=\"2\" cy=\"-10\" r=\"1.5\" fill=\"#444\" opacity=\".8\"/>\n        <circle cx=\"-1\" cy=\"-8\" r=\"1.5\" fill=\"#444\" opacity=\".8\"/>\n      </g>\n    </svg>",
+  "cherry-blossom": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,50)\">\n        <path d=\"M0,0 Q4,8 8,20\" stroke=\"#444\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M4,10 Q12,8 16,2 Q8,8 4,10\" fill=\"#555\"/>\n        <path d=\"M0,0 Q-6,6 -10,18\" stroke=\"#444\" stroke-width=\"1.5\" fill=\"none\"/>\n        <g transform=\"translate(10,-6)\">\n          <ellipse cx=\"0\" cy=\"-5\" rx=\"4\" ry=\"6\" fill=\"#ddd\"/>\n          <ellipse cx=\"4.8\" cy=\"-1.5\" rx=\"4\" ry=\"6\" fill=\"#ccc\" transform=\"rotate(72,4.8,-1.5)\"/>\n          <ellipse cx=\"3\" cy=\"4\" rx=\"4\" ry=\"6\" fill=\"#ddd\" transform=\"rotate(144,3,4)\"/>\n          <ellipse cx=\"-3\" cy=\"4\" rx=\"4\" ry=\"6\" fill=\"#ccc\" transform=\"rotate(-144,-3,4)\"/>\n          <ellipse cx=\"-4.8\" cy=\"-1.5\" rx=\"4\" ry=\"6\" fill=\"#ddd\" transform=\"rotate(-72,-4.8,-1.5)\"/>\n          <circle cx=\"0\" cy=\"0\" r=\"2.5\" fill=\"#fff\"/>\n        </g>\n        <g transform=\"translate(-8,-18)\">\n          <ellipse cx=\"0\" cy=\"-4\" rx=\"3\" ry=\"5\" fill=\"#ddd\"/>\n          <ellipse cx=\"3.8\" cy=\"-1.2\" rx=\"3\" ry=\"5\" fill=\"#ccc\" transform=\"rotate(72,3.8,-1.2)\"/>\n          <ellipse cx=\"2.3\" cy=\"3.2\" rx=\"3\" ry=\"5\" fill=\"#ddd\" transform=\"rotate(144,2.3,3.2)\"/>\n          <ellipse cx=\"-2.3\" cy=\"3.2\" rx=\"3\" ry=\"5\" fill=\"#ccc\" transform=\"rotate(-144,-2.3,3.2)\"/>\n          <ellipse cx=\"-3.8\" cy=\"-1.2\" rx=\"3\" ry=\"5\" fill=\"#ddd\" transform=\"rotate(-72,-3.8,-1.2)\"/>\n          <circle cx=\"0\" cy=\"0\" r=\"2\" fill=\"#fff\"/>\n        </g>\n        <ellipse cx=\"16\" cy=\"-30\" rx=\"2.5\" ry=\"4\" fill=\"#ddd\" transform=\"rotate(30,16,-30)\" opacity=\".65\"/>\n      </g>\n    </svg>",
+  "iris": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,48)\">\n        <path d=\"M0,0 Q-2,12 -1,26\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M-1,16 Q-10,12 -10,6\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"none\"/>\n        <ellipse cx=\"-12\" cy=\"-12\" rx=\"5\" ry=\"12\" fill=\"#555\" opacity=\".8\" transform=\"rotate(-30,-12,-12)\"/>\n        <ellipse cx=\"12\" cy=\"-12\" rx=\"5\" ry=\"12\" fill=\"#444\" opacity=\".8\" transform=\"rotate(30,12,-12)\"/>\n        <ellipse cx=\"0\" cy=\"-22\" rx=\"5\" ry=\"12\" fill=\"#666\" opacity=\".9\"/>\n        <ellipse cx=\"-8\" cy=\"-8\" rx=\"4\" ry=\"9\" fill=\"#333\" opacity=\".75\" transform=\"rotate(-10,-8,-8)\"/>\n        <ellipse cx=\"8\" cy=\"-8\" rx=\"4\" ry=\"9\" fill=\"#333\" opacity=\".75\" transform=\"rotate(10,8,-8)\"/>\n        <ellipse cx=\"0\" cy=\"-10\" rx=\"4\" ry=\"7\" fill=\"#eee\"/>\n        <ellipse cx=\"0\" cy=\"-10\" rx=\"2.5\" ry=\"5\" fill=\"#ddd\"/>\n      </g>\n    </svg>",
+  "carnation-pink": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,46)\">\n        <path d=\"M0,0 Q-3,12 -2,28\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M-2,18 Q-12,12 -12,6\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"none\"/>\n        <path d=\"M-8,-8 Q-12,-20 -4,-24 Q0,-26 4,-24 Q12,-20 8,-8 Q4,-4 0,-2 Q-4,-4 -8,-8Z\" fill=\"#bbb\"/>\n        <path d=\"M-14,-10 Q-18,-20 -10,-24 Q-4,-20 -8,-8 Q-10,-4 -14,-10Z\" fill=\"#999\" opacity=\".8\"/>\n        <path d=\"M14,-10 Q18,-20 10,-24 Q4,-20 8,-8 Q10,-4 14,-10Z\" fill=\"#999\" opacity=\".8\"/>\n        <path d=\"M-4,-6 Q-8,-16 -2,-22 Q0,-14 0,-2 Q-2,-2 -4,-6Z\" fill=\"#ddd\" opacity=\".5\"/>\n        <path d=\"M4,-6 Q8,-16 2,-22 Q0,-14 0,-2 Q2,-2 4,-6Z\" fill=\"#ddd\" opacity=\".5\"/>\n      </g>\n    </svg>",
+  "magnolia": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,48)\">\n        <path d=\"M0,0 Q-2,12 -1,28\" stroke=\"#444\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M-1,18 Q-12,12 -12,6\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"none\"/>\n        <ellipse cx=\"-12\" cy=\"-18\" rx=\"6\" ry=\"13\" fill=\"#eee\" stroke=\"#999\" stroke-width=\".5\" transform=\"rotate(-30,-12,-18)\"/>\n        <ellipse cx=\"12\" cy=\"-18\" rx=\"6\" ry=\"13\" fill=\"#ddd\" stroke=\"#999\" stroke-width=\".5\" transform=\"rotate(30,12,-18)\"/>\n        <ellipse cx=\"0\" cy=\"-24\" rx=\"6\" ry=\"13\" fill=\"#f0f0f0\" stroke=\"#999\" stroke-width=\".5\"/>\n        <ellipse cx=\"-14\" cy=\"-8\" rx=\"5\" ry=\"11\" fill=\"#e8e8e8\" stroke=\"#999\" stroke-width=\".5\" transform=\"rotate(-70,-14,-8)\"/>\n        <ellipse cx=\"14\" cy=\"-8\" rx=\"5\" ry=\"11\" fill=\"#eee\" stroke=\"#999\" stroke-width=\".5\" transform=\"rotate(70,14,-8)\"/>\n        <ellipse cx=\"0\" cy=\"-14\" rx=\"5\" ry=\"10\" fill=\"#f8f8f8\"/>\n        <ellipse cx=\"0\" cy=\"-14\" rx=\"3\" ry=\"5\" fill=\"#888\"/>\n        <ellipse cx=\"0\" cy=\"-14\" rx=\"2\" ry=\"4\" fill=\"#666\"/>\n      </g>\n    </svg>",
+  "poppy-red": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,46)\">\n        <path d=\"M0,0 Q-4,10 -3,26\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M-3,16 Q-14,10 -14,4 Q-8,10 -3,16\" fill=\"#555\"/>\n        <ellipse cx=\"-10\" cy=\"-14\" rx=\"10\" ry=\"13\" fill=\"#111\" opacity=\".85\" transform=\"rotate(-20,-10,-14)\"/>\n        <ellipse cx=\"10\" cy=\"-14\" rx=\"10\" ry=\"13\" fill=\"#222\" opacity=\".85\" transform=\"rotate(20,10,-14)\"/>\n        <ellipse cx=\"-6\" cy=\"-22\" rx=\"9\" ry=\"12\" fill=\"#111\" opacity=\".9\" transform=\"rotate(-10,-6,-22)\"/>\n        <ellipse cx=\"6\" cy=\"-22\" rx=\"9\" ry=\"12\" fill=\"#222\" opacity=\".9\" transform=\"rotate(10,6,-22)\"/>\n        <circle cx=\"0\" cy=\"-14\" r=\"7\" fill=\"#000\"/>\n        <circle cx=\"-2\" cy=\"-15\" r=\"1.5\" fill=\"#333\" opacity=\".8\"/>\n        <circle cx=\"2\" cy=\"-13\" r=\"1.5\" fill=\"#333\" opacity=\".8\"/>\n      </g>\n    </svg>",
+  "chrysanthemum": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,44)\">\n        <path d=\"M0,2 Q-2,14 -1,30\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M-1,20 Q-12,14 -12,8\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"none\"/>\n        <g opacity=\".9\">\n          <ellipse cx=\"0\" cy=\"-20\" rx=\"3\" ry=\"9\" fill=\"#ccc\"/>\n          <ellipse cx=\"8\" cy=\"-18\" rx=\"3\" ry=\"9\" fill=\"#bbb\" transform=\"rotate(40,8,-18)\"/>\n          <ellipse cx=\"14\" cy=\"-12\" rx=\"3\" ry=\"9\" fill=\"#ccc\" transform=\"rotate(80,14,-12)\"/>\n          <ellipse cx=\"15\" cy=\"-4\" rx=\"3\" ry=\"9\" fill=\"#bbb\" transform=\"rotate(110,15,-4)\"/>\n          <ellipse cx=\"12\" cy=\"6\" rx=\"3\" ry=\"9\" fill=\"#ccc\" transform=\"rotate(140,12,6)\"/>\n          <ellipse cx=\"4\" cy=\"10\" rx=\"3\" ry=\"9\" fill=\"#bbb\" transform=\"rotate(170,4,10)\"/>\n          <ellipse cx=\"-4\" cy=\"10\" rx=\"3\" ry=\"9\" fill=\"#ccc\" transform=\"rotate(-170,-4,10)\"/>\n          <ellipse cx=\"-12\" cy=\"6\" rx=\"3\" ry=\"9\" fill=\"#bbb\" transform=\"rotate(-140,-12,6)\"/>\n          <ellipse cx=\"-15\" cy=\"-4\" rx=\"3\" ry=\"9\" fill=\"#ccc\" transform=\"rotate(-110,-15,-4)\"/>\n          <ellipse cx=\"-14\" cy=\"-12\" rx=\"3\" ry=\"9\" fill=\"#bbb\" transform=\"rotate(-80,-14,-12)\"/>\n          <ellipse cx=\"-8\" cy=\"-18\" rx=\"3\" ry=\"9\" fill=\"#ccc\" transform=\"rotate(-40,-8,-18)\"/>\n        </g>\n        <circle cx=\"0\" cy=\"-8\" r=\"6\" fill=\"#444\"/>\n        <circle cx=\"0\" cy=\"-8\" r=\"3\" fill=\"#222\"/>\n      </g>\n    </svg>",
+  "ribbon-red": "<svg viewBox=\"0 0 80 60\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M40,30 Q20,10 8,18 Q-2,28 22,32 Q40,36 40,30 Q40,36 58,32 Q82,28 72,18 Q60,10 40,30Z\" fill=\"#111\" stroke=\"#333\" stroke-width=\"1\"/>\n      <ellipse cx=\"40\" cy=\"30\" rx=\"6\" ry=\"6\" fill=\"#000\"/>\n      <path d=\"M40,30 L33,55 Q37,57 40,54 L43,54 Q47,57 47,55Z\" fill=\"#111\" stroke=\"#333\" stroke-width=\".8\"/>\n      <path d=\"M40,30 L33,55\" stroke=\"#444\" stroke-width=\".5\" fill=\"none\"/>\n      <path d=\"M40,30 L47,55\" stroke=\"#444\" stroke-width=\".5\" fill=\"none\"/>\n    </svg>",
+  "ribbon-simple": "<svg viewBox=\"0 0 80 60\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M40,28 Q20,8 8,18 Q-2,28 22,32 Q40,36 40,28 Q40,36 58,32 Q82,28 72,18 Q60,8 40,28Z\" fill=\"#666\" stroke=\"#333\" stroke-width=\"1\"/>\n      <ellipse cx=\"40\" cy=\"28\" rx=\"5\" ry=\"5\" fill=\"#444\"/>\n      <path d=\"M40,28 L34,54 Q38,56 40,53 L42,53 Q46,56 46,54Z\" fill=\"#666\" stroke=\"#333\" stroke-width=\".8\"/>\n    </svg>",
+  "ribbon-double": "<svg viewBox=\"0 0 80 70\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M40,25 Q22,6 10,14 Q0,24 24,28 Q40,32 40,25 Q40,32 56,28 Q80,24 70,14 Q58,6 40,25Z\" fill=\"#888\" stroke=\"#555\" stroke-width=\"1\"/>\n      <path d=\"M40,35 Q24,18 12,26 Q2,36 26,38 Q40,40 40,35 Q40,40 54,38 Q78,36 68,26 Q56,18 40,35Z\" fill=\"#555\" stroke=\"#333\" stroke-width=\"1\"/>\n      <ellipse cx=\"40\" cy=\"30\" rx=\"5\" ry=\"5\" fill=\"#333\"/>\n      <path d=\"M40,35 L34,58 Q38,60 40,57 L42,57 Q46,60 46,58Z\" fill=\"#555\" stroke=\"#333\" stroke-width=\".8\"/>\n    </svg>",
+  "wrap-kraft": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M10,70 L30,30 L50,30 L70,70Z\" fill=\"#bbb\" stroke=\"#333\" stroke-width=\"1.5\"/>\n      <path d=\"M10,70 L30,30 L50,30 L70,70Z\" fill=\"none\" stroke=\"#666\" stroke-width=\".5\" stroke-dasharray=\"3,3\"/>\n      <path d=\"M30,30 L40,10 L50,30\" fill=\"#999\" stroke=\"#333\" stroke-width=\"1\"/>\n      <line x1=\"30\" y1=\"30\" x2=\"10\" y2=\"70\" stroke=\"#888\" stroke-width=\".5\"/>\n      <line x1=\"50\" y1=\"30\" x2=\"70\" y2=\"70\" stroke=\"#888\" stroke-width=\".5\"/>\n    </svg>",
+  "wrap-newsprint": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M10,70 L30,30 L50,30 L70,70Z\" fill=\"#e8e8e8\" stroke=\"#333\" stroke-width=\"1.5\"/>\n      <line x1=\"14\" y1=\"62\" x2=\"42\" y2=\"36\" stroke=\"#aaa\" stroke-width=\".5\"/>\n      <line x1=\"18\" y1=\"68\" x2=\"46\" y2=\"34\" stroke=\"#aaa\" stroke-width=\".5\"/>\n      <line x1=\"24\" y1=\"70\" x2=\"50\" y2=\"30\" stroke=\"#aaa\" stroke-width=\".5\"/>\n      <line x1=\"32\" y1=\"70\" x2=\"56\" y2=\"34\" stroke=\"#aaa\" stroke-width=\".5\"/>\n      <line x1=\"40\" y1=\"70\" x2=\"62\" y2=\"40\" stroke=\"#aaa\" stroke-width=\".5\"/>\n      <path d=\"M30,30 L40,10 L50,30\" fill=\"#d0d0d0\" stroke=\"#333\" stroke-width=\"1\"/>\n    </svg>",
+  "wrap-white": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M10,70 L30,30 L50,30 L70,70Z\" fill=\"#fff\" stroke=\"#333\" stroke-width=\"1.5\"/>\n      <path d=\"M30,30 L40,10 L50,30\" fill=\"#eee\" stroke=\"#333\" stroke-width=\"1\"/>\n      <line x1=\"30\" y1=\"30\" x2=\"10\" y2=\"70\" stroke=\"#ccc\" stroke-width=\".5\"/>\n      <line x1=\"50\" y1=\"30\" x2=\"70\" y2=\"70\" stroke=\"#ccc\" stroke-width=\".5\"/>\n    </svg>"
+};
+
+const ORIG = {
+  "rose-red": {
+    "name": "Red Rose",
+    "tags": [
+      "love"
+    ],
+    "meaning": "Deep romantic love and desire. Red roses have symbolized passion since Ancient Greece — associated with Aphrodite and later the Virgin Mary. Giving a single red rose is one of the oldest and most recognized declarations of love in the world.",
+    "origin": "Ancient Greek & Roman tradition",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,46)\">\n        <path d=\"M0,0 Q-4,14 -3,30\" stroke=\"#333\" stroke-width=\"2.5\" fill=\"none\"/>\n        <path d=\"M-3,20 Q-14,14 -12,6 Q-7,14 -3,20\" fill=\"#555\"/>\n        <ellipse cx=\"-11\" cy=\"-11\" rx=\"10\" ry=\"7\" fill=\"#111\" opacity=\".85\" transform=\"rotate(-30,-11,-11)\"/>\n        <ellipse cx=\"11\" cy=\"-11\" rx=\"10\" ry=\"7\" fill=\"#222\" opacity=\".85\" transform=\"rotate(30,11,-11)\"/>\n        <ellipse cx=\"0\" cy=\"-20\" rx=\"9\" ry=\"7\" fill=\"#333\" opacity=\".9\"/>\n        <ellipse cx=\"-8\" cy=\"-5\" rx=\"9\" ry=\"6\" fill=\"#111\"/>\n        <ellipse cx=\"8\" cy=\"-5\" rx=\"9\" ry=\"6\" fill=\"#222\"/>\n        <circle cx=\"0\" cy=\"-11\" r=\"6\" fill=\"#000\"/>\n        <circle cx=\"-1\" cy=\"-12\" r=\"2\" fill=\"#444\"/>\n      </g>\n    </svg>"
+  },
+  "rose-yellow": {
+    "name": "Yellow Rose",
+    "tags": [
+      "joy",
+      "loyalty"
+    ],
+    "meaning": "Friendship, warmth, and platonic love. Unlike red roses, yellow roses carry no romantic overtones — they celebrate caring and joy between friends. In the Victorian language of flowers they sometimes meant jealousy, but today they are universally read as cheerful and warm.",
+    "origin": "Victorian floriography",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,46)\">\n        <path d=\"M0,0 Q-4,14 -3,30\" stroke=\"#333\" stroke-width=\"2.5\" fill=\"none\"/>\n        <path d=\"M-3,20 Q-14,14 -12,6 Q-7,14 -3,20\" fill=\"#555\"/>\n        <ellipse cx=\"-11\" cy=\"-11\" rx=\"10\" ry=\"7\" fill=\"#aaa\" opacity=\".85\" transform=\"rotate(-30,-11,-11)\"/>\n        <ellipse cx=\"11\" cy=\"-11\" rx=\"10\" ry=\"7\" fill=\"#999\" opacity=\".85\" transform=\"rotate(30,11,-11)\"/>\n        <ellipse cx=\"0\" cy=\"-20\" rx=\"9\" ry=\"7\" fill=\"#ccc\" opacity=\".9\"/>\n        <ellipse cx=\"-8\" cy=\"-5\" rx=\"9\" ry=\"6\" fill=\"#aaa\"/>\n        <ellipse cx=\"8\" cy=\"-5\" rx=\"9\" ry=\"6\" fill=\"#bbb\"/>\n        <circle cx=\"0\" cy=\"-11\" r=\"6\" fill=\"#666\"/>\n        <circle cx=\"-1\" cy=\"-12\" r=\"2\" fill=\"#888\"/>\n      </g>\n    </svg>"
+  },
+  "peony": {
+    "name": "Peony",
+    "tags": [
+      "love",
+      "joy"
+    ],
+    "meaning": "Prosperity, romance, and honor. In Chinese culture the peony is the \"king of flowers,\" representing wealth and good fortune. In Western tradition it stands for a happy marriage and is the birth flower of November. It's the state flower of Indiana and one of the most popular wedding flowers.",
+    "origin": "Chinese Tang dynasty, Victorian tradition",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,46)\">\n        <path d=\"M0,0 Q4,12 2,28\" stroke=\"#333\" stroke-width=\"2.5\" fill=\"none\"/>\n        <path d=\"M2,16 Q12,10 14,4 Q8,12 2,16\" fill=\"#555\"/>\n        <circle cx=\"0\" cy=\"-14\" r=\"16\" fill=\"#ccc\" opacity=\".4\"/>\n        <ellipse cx=\"-10\" cy=\"-18\" rx=\"8\" ry=\"6\" fill=\"#aaa\" transform=\"rotate(-20,-10,-18)\"/>\n        <ellipse cx=\"10\" cy=\"-18\" rx=\"8\" ry=\"6\" fill=\"#999\" transform=\"rotate(20,10,-18)\"/>\n        <ellipse cx=\"-14\" cy=\"-10\" rx=\"7\" ry=\"5\" fill=\"#bbb\" transform=\"rotate(-60,-14,-10)\"/>\n        <ellipse cx=\"14\" cy=\"-10\" rx=\"7\" ry=\"5\" fill=\"#aaa\" transform=\"rotate(60,14,-10)\"/>\n        <ellipse cx=\"0\" cy=\"-23\" rx=\"7\" ry=\"5\" fill=\"#ddd\"/>\n        <circle cx=\"0\" cy=\"-14\" r=\"7\" fill=\"#eee\"/>\n        <circle cx=\"-2\" cy=\"-15\" r=\"3\" fill=\"#bbb\"/>\n        <circle cx=\"2\" cy=\"-13\" r=\"2.5\" fill=\"#ccc\"/>\n      </g>\n    </svg>"
+  },
+  "lavender": {
+    "name": "Lavender",
+    "tags": [
+      "loyalty",
+      "mystery"
+    ],
+    "meaning": "Devotion, calm, and distrust. Lavender holds a dual symbolism: it represents serenity and faithful love, but in the Victorian language of flowers it also historically carried the meaning \"I don't fully trust you.\" The plant has been used medicinally and ritually since ancient Egypt for purification.",
+    "origin": "Ancient Egypt, Victorian floriography",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,52)\">\n        <line x1=\"0\" y1=\"0\" x2=\"0\" y2=\"28\" stroke=\"#333\" stroke-width=\"2\"/>\n        <path d=\"M0,10 Q-10,5 -10,-2 Q-6,5 0,10\" fill=\"#555\"/>\n        <path d=\"M0,10 Q10,5 10,-2 Q6,5 0,10\" fill=\"#555\"/>\n        <ellipse cx=\"-3\" cy=\"-5\" rx=\"4\" ry=\"6\" fill=\"#666\" opacity=\".85\"/>\n        <ellipse cx=\"3\" cy=\"-8\" rx=\"4\" ry=\"6\" fill=\"#444\" opacity=\".85\"/>\n        <ellipse cx=\"-3\" cy=\"-16\" rx=\"3.5\" ry=\"5\" fill=\"#777\" opacity=\".9\"/>\n        <ellipse cx=\"3\" cy=\"-20\" rx=\"3\" ry=\"5\" fill=\"#555\" opacity=\".9\"/>\n        <ellipse cx=\"0\" cy=\"-27\" rx=\"2.5\" ry=\"4\" fill=\"#888\"/>\n      </g>\n    </svg>"
+  },
+  "lily-white": {
+    "name": "White Lily",
+    "tags": [
+      "hope",
+      "grief"
+    ],
+    "meaning": "Purity, renewal, and the soul restored to innocence. White lilies are central to Christian Easter symbolism — they represent resurrection. They are also traditional funeral flowers across many Western cultures, placed on graves to signify that the departed soul has been returned to purity.",
+    "origin": "Christian symbolism, ancient Greek mythology",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,48)\">\n        <path d=\"M0,0 Q-3,12 -2,28\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M-2,18 Q-12,12 -10,6\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"none\"/>\n        <ellipse cx=\"-4\" cy=\"-20\" rx=\"5\" ry=\"14\" fill=\"#eee\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(-25,-4,-20)\"/>\n        <ellipse cx=\"4\" cy=\"-20\" rx=\"5\" ry=\"14\" fill=\"#eee\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(25,4,-20)\"/>\n        <ellipse cx=\"-12\" cy=\"-12\" rx=\"5\" ry=\"14\" fill=\"#e8e8e8\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(-65,-12,-12)\"/>\n        <ellipse cx=\"12\" cy=\"-12\" rx=\"5\" ry=\"14\" fill=\"#e8e8e8\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(65,12,-12)\"/>\n        <ellipse cx=\"0\" cy=\"-22\" rx=\"5\" ry=\"14\" fill=\"#eee\" stroke=\"#999\" stroke-width=\".8\"/>\n        <line x1=\"-2\" y1=\"-12\" x2=\"-4\" y2=\"-22\" stroke=\"#666\" stroke-width=\"1\"/>\n        <line x1=\"0\" y1=\"-12\" x2=\"0\" y2=\"-24\" stroke=\"#666\" stroke-width=\"1\"/>\n        <line x1=\"2\" y1=\"-12\" x2=\"4\" y2=\"-22\" stroke=\"#666\" stroke-width=\"1\"/>\n        <circle cx=\"-4\" cy=\"-23\" r=\"1.5\" fill=\"#888\"/>\n        <circle cx=\"0\" cy=\"-25\" r=\"1.5\" fill=\"#888\"/>\n        <circle cx=\"4\" cy=\"-23\" r=\"1.5\" fill=\"#888\"/>\n      </g>\n    </svg>"
+  },
+  "forget-me-not": {
+    "name": "Forget-Me-Not",
+    "tags": [
+      "memory",
+      "love"
+    ],
+    "meaning": "True love and remembrance. According to German medieval legend, a knight picking these flowers by a river was swept away by the current, crying \"Vergiss mein nicht!\" (forget me not!). They are worn to remember those who have died and are the official symbol of Alzheimer's Disease International.",
+    "origin": "German medieval legend, 15th century",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,52)\">\n        <path d=\"M0,0 Q-4,12 -4,26\" stroke=\"#333\" stroke-width=\"1.5\" fill=\"none\"/>\n        <path d=\"M-4,16 Q-12,12 -12,6\" stroke=\"#555\" stroke-width=\"1.2\" fill=\"none\"/>\n        <g transform=\"translate(-6,-14)\">\n          <circle cx=\"0\" cy=\"-5\" r=\"3\" fill=\"#666\"/>\n          <circle cx=\"4.3\" cy=\"-2.5\" r=\"3\" fill=\"#777\"/>\n          <circle cx=\"4.3\" cy=\"2.5\" r=\"3\" fill=\"#666\"/>\n          <circle cx=\"0\" cy=\"5\" r=\"3\" fill=\"#777\"/>\n          <circle cx=\"-4.3\" cy=\"2.5\" r=\"3\" fill=\"#666\"/>\n          <circle cx=\"-4.3\" cy=\"-2.5\" r=\"3\" fill=\"#777\"/>\n          <circle cx=\"0\" cy=\"0\" r=\"2\" fill=\"#eee\"/>\n        </g>\n        <g transform=\"translate(4,-26)\">\n          <circle cx=\"0\" cy=\"-5\" r=\"2.5\" fill=\"#666\"/>\n          <circle cx=\"3.5\" cy=\"-2\" r=\"2.5\" fill=\"#888\"/>\n          <circle cx=\"3.5\" cy=\"2\" r=\"2.5\" fill=\"#666\"/>\n          <circle cx=\"0\" cy=\"5\" r=\"2.5\" fill=\"#888\"/>\n          <circle cx=\"-3.5\" cy=\"2\" r=\"2.5\" fill=\"#666\"/>\n          <circle cx=\"-3.5\" cy=\"-2\" r=\"2.5\" fill=\"#888\"/>\n          <circle cx=\"0\" cy=\"0\" r=\"1.8\" fill=\"#eee\"/>\n        </g>\n      </g>\n    </svg>"
+  },
+  "tulip-red": {
+    "name": "Red Tulip",
+    "tags": [
+      "love"
+    ],
+    "meaning": "A declaration of love — \"believe me, I love you.\" Tulips originated in Central Asia and were wildly coveted in Ottoman Turkey. The red variety specifically means passion and perfect love. During Tulipomania in 1630s Holland, single bulbs sold for the price of a house.",
+    "origin": "Ottoman Empire, 17th century Netherlands",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,50)\">\n        <path d=\"M0,0 Q2,10 1,28\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M1,18 Q10,14 12,8 Q6,14 1,18\" fill=\"#555\"/>\n        <path d=\"M-10,-8 Q-12,-22 0,-28 Q12,-22 10,-8 Q5,0 0,2 Q-5,0 -10,-8Z\" fill=\"#222\"/>\n        <path d=\"M0,-28 Q0,-10 0,2\" stroke=\"#555\" stroke-width=\"1\" fill=\"none\" opacity=\".5\"/>\n        <path d=\"M-10,-8 Q-6,-18 0,-22 Q-8,-16 -10,-8\" fill=\"#555\" opacity=\".4\"/>\n      </g>\n    </svg>"
+  },
+  "tulip-purple": {
+    "name": "Purple Tulip",
+    "tags": [
+      "mystery",
+      "love"
+    ],
+    "meaning": "Royalty and admiration. Purple flowers are historically rare in nature, making purple tulips symbols of nobility and prestige. In the Victorian language of flowers they mean \"I admire you\" — a more dignified, considered declaration than the boldness of the red tulip.",
+    "origin": "Victorian floriography",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,50)\">\n        <path d=\"M0,0 Q2,10 1,28\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M1,18 Q10,14 12,8 Q6,14 1,18\" fill=\"#555\"/>\n        <path d=\"M-10,-8 Q-12,-22 0,-28 Q12,-22 10,-8 Q5,0 0,2 Q-5,0 -10,-8Z\" fill=\"#444\"/>\n        <path d=\"M0,-28 Q0,-10 0,2\" stroke=\"#777\" stroke-width=\"1\" fill=\"none\" opacity=\".5\"/>\n        <path d=\"M-10,-8 Q-6,-18 0,-22 Q-8,-16 -10,-8\" fill=\"#888\" opacity=\".35\"/>\n      </g>\n    </svg>"
+  },
+  "daisy": {
+    "name": "Daisy",
+    "tags": [
+      "hope",
+      "joy"
+    ],
+    "meaning": "Innocence, new beginnings, and loyal love. The name comes from Old English \"dæges ēage\" — the day's eye — because it opens at dawn. Daisies symbolize \"I'll never tell\" in floriography and appear in Celtic mythology as the flowers of new mothers, sprung from the stars.",
+    "origin": "Old English folklore, Celtic mythology",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,46)\">\n        <path d=\"M0,0 Q-2,12 -1,28\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M-1,18 Q-10,14 -10,8\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"none\"/>\n        <ellipse cx=\"0\" cy=\"-20\" rx=\"3.5\" ry=\"8\" fill=\"#fff\" stroke=\"#999\" stroke-width=\".8\"/>\n        <ellipse cx=\"14\" cy=\"-14\" rx=\"3.5\" ry=\"8\" fill=\"#fff\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(60,14,-14)\"/>\n        <ellipse cx=\"14\" cy=\"-6\" rx=\"3.5\" ry=\"8\" fill=\"#fff\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(120,14,-6)\"/>\n        <ellipse cx=\"0\" cy=\"0\" rx=\"3.5\" ry=\"8\" fill=\"#fff\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(180,0,0)\"/>\n        <ellipse cx=\"-14\" cy=\"-6\" rx=\"3.5\" ry=\"8\" fill=\"#fff\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(-120,-14,-6)\"/>\n        <ellipse cx=\"-14\" cy=\"-14\" rx=\"3.5\" ry=\"8\" fill=\"#fff\" stroke=\"#999\" stroke-width=\".8\" transform=\"rotate(-60,-14,-14)\"/>\n        <circle cx=\"0\" cy=\"-12\" r=\"7\" fill=\"#bbb\"/>\n        <circle cx=\"0\" cy=\"-12\" r=\"4\" fill=\"#888\"/>\n      </g>\n    </svg>"
+  },
+  "sunflower": {
+    "name": "Sunflower",
+    "tags": [
+      "loyalty",
+      "joy"
+    ],
+    "meaning": "Adoration and unwavering faith. Young sunflowers track the sun via heliotropism — in Greek myth this mirrors Clytie's eternal devotion to Apollo. They also symbolize long life in Chinese culture, and the sunflower is Ukraine's national flower, representing peace and resilience.",
+    "origin": "Ancient Greek mythology, Aztec culture",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,46)\">\n        <path d=\"M0,0 Q-2,12 -1,28\" stroke=\"#333\" stroke-width=\"2.5\" fill=\"none\"/>\n        <path d=\"M-1,16 Q-12,10 -12,4\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"none\"/>\n        <ellipse cx=\"0\" cy=\"-22\" rx=\"4\" ry=\"10\" fill=\"#ccc\"/>\n        <ellipse cx=\"15\" cy=\"-16\" rx=\"4\" ry=\"10\" fill=\"#bbb\" transform=\"rotate(52,15,-16)\"/>\n        <ellipse cx=\"19\" cy=\"-3\" rx=\"4\" ry=\"10\" fill=\"#ccc\" transform=\"rotate(104,19,-3)\"/>\n        <ellipse cx=\"12\" cy=\"10\" rx=\"4\" ry=\"10\" fill=\"#bbb\" transform=\"rotate(156,12,10)\"/>\n        <ellipse cx=\"-12\" cy=\"10\" rx=\"4\" ry=\"10\" fill=\"#ccc\" transform=\"rotate(-156,-12,10)\"/>\n        <ellipse cx=\"-19\" cy=\"-3\" rx=\"4\" ry=\"10\" fill=\"#bbb\" transform=\"rotate(-104,-19,-3)\"/>\n        <ellipse cx=\"-15\" cy=\"-16\" rx=\"4\" ry=\"10\" fill=\"#ccc\" transform=\"rotate(-52,-15,-16)\"/>\n        <circle cx=\"0\" cy=\"-10\" r=\"10\" fill=\"#222\"/>\n        <circle cx=\"0\" cy=\"-10\" r=\"7\" fill=\"#111\"/>\n        <circle cx=\"-2\" cy=\"-12\" r=\"1.5\" fill=\"#444\" opacity=\".8\"/>\n        <circle cx=\"2\" cy=\"-10\" r=\"1.5\" fill=\"#444\" opacity=\".8\"/>\n        <circle cx=\"-1\" cy=\"-8\" r=\"1.5\" fill=\"#444\" opacity=\".8\"/>\n      </g>\n    </svg>"
+  },
+  "cherry-blossom": {
+    "name": "Cherry Blossom",
+    "tags": [
+      "joy",
+      "grief"
+    ],
+    "meaning": "The beauty of impermanence. In Japan (sakura) they embody mono no aware — \"the pathos of things\" — because they bloom for only one to two weeks before falling. Samurai embraced them as a metaphor for life's brief, fierce beauty. Hanami (flower-viewing parties) have been held for over a thousand years.",
+    "origin": "Japanese Shinto tradition, samurai culture",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,50)\">\n        <path d=\"M0,0 Q4,8 8,20\" stroke=\"#444\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M4,10 Q12,8 16,2 Q8,8 4,10\" fill=\"#555\"/>\n        <path d=\"M0,0 Q-6,6 -10,18\" stroke=\"#444\" stroke-width=\"1.5\" fill=\"none\"/>\n        <g transform=\"translate(10,-6)\">\n          <ellipse cx=\"0\" cy=\"-5\" rx=\"4\" ry=\"6\" fill=\"#ddd\"/>\n          <ellipse cx=\"4.8\" cy=\"-1.5\" rx=\"4\" ry=\"6\" fill=\"#ccc\" transform=\"rotate(72,4.8,-1.5)\"/>\n          <ellipse cx=\"3\" cy=\"4\" rx=\"4\" ry=\"6\" fill=\"#ddd\" transform=\"rotate(144,3,4)\"/>\n          <ellipse cx=\"-3\" cy=\"4\" rx=\"4\" ry=\"6\" fill=\"#ccc\" transform=\"rotate(-144,-3,4)\"/>\n          <ellipse cx=\"-4.8\" cy=\"-1.5\" rx=\"4\" ry=\"6\" fill=\"#ddd\" transform=\"rotate(-72,-4.8,-1.5)\"/>\n          <circle cx=\"0\" cy=\"0\" r=\"2.5\" fill=\"#fff\"/>\n        </g>\n        <g transform=\"translate(-8,-18)\">\n          <ellipse cx=\"0\" cy=\"-4\" rx=\"3\" ry=\"5\" fill=\"#ddd\"/>\n          <ellipse cx=\"3.8\" cy=\"-1.2\" rx=\"3\" ry=\"5\" fill=\"#ccc\" transform=\"rotate(72,3.8,-1.2)\"/>\n          <ellipse cx=\"2.3\" cy=\"3.2\" rx=\"3\" ry=\"5\" fill=\"#ddd\" transform=\"rotate(144,2.3,3.2)\"/>\n          <ellipse cx=\"-2.3\" cy=\"3.2\" rx=\"3\" ry=\"5\" fill=\"#ccc\" transform=\"rotate(-144,-2.3,3.2)\"/>\n          <ellipse cx=\"-3.8\" cy=\"-1.2\" rx=\"3\" ry=\"5\" fill=\"#ddd\" transform=\"rotate(-72,-3.8,-1.2)\"/>\n          <circle cx=\"0\" cy=\"0\" r=\"2\" fill=\"#fff\"/>\n        </g>\n        <ellipse cx=\"16\" cy=\"-30\" rx=\"2.5\" ry=\"4\" fill=\"#ddd\" transform=\"rotate(30,16,-30)\" opacity=\".65\"/>\n      </g>\n    </svg>"
+  },
+  "iris": {
+    "name": "Blue Iris",
+    "tags": [
+      "hope",
+      "loyalty"
+    ],
+    "meaning": "Hope, courage, and wisdom. Named after the Greek goddess of the rainbow, who was a messenger between heaven and earth. The iris is the basis of France's fleur-de-lis and the national symbol of France. Blue irises represent faith and hope, and were traditionally placed on the graves of French soldiers.",
+    "origin": "Ancient Greece, French heraldry",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,48)\">\n        <path d=\"M0,0 Q-2,12 -1,26\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M-1,16 Q-10,12 -10,6\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"none\"/>\n        <ellipse cx=\"-12\" cy=\"-12\" rx=\"5\" ry=\"12\" fill=\"#555\" opacity=\".8\" transform=\"rotate(-30,-12,-12)\"/>\n        <ellipse cx=\"12\" cy=\"-12\" rx=\"5\" ry=\"12\" fill=\"#444\" opacity=\".8\" transform=\"rotate(30,12,-12)\"/>\n        <ellipse cx=\"0\" cy=\"-22\" rx=\"5\" ry=\"12\" fill=\"#666\" opacity=\".9\"/>\n        <ellipse cx=\"-8\" cy=\"-8\" rx=\"4\" ry=\"9\" fill=\"#333\" opacity=\".75\" transform=\"rotate(-10,-8,-8)\"/>\n        <ellipse cx=\"8\" cy=\"-8\" rx=\"4\" ry=\"9\" fill=\"#333\" opacity=\".75\" transform=\"rotate(10,8,-8)\"/>\n        <ellipse cx=\"0\" cy=\"-10\" rx=\"4\" ry=\"7\" fill=\"#eee\"/>\n        <ellipse cx=\"0\" cy=\"-10\" rx=\"2.5\" ry=\"5\" fill=\"#ddd\"/>\n      </g>\n    </svg>"
+  },
+  "carnation-pink": {
+    "name": "Pink Carnation",
+    "tags": [
+      "love",
+      "memory"
+    ],
+    "meaning": "A mother's undying love. In Christian legend, pink carnations first bloomed where the Virgin Mary's tears fell at the crucifixion. Anna Jarvis wore one at the first official Mother's Day service in 1907, and since then pink carnations have become the worldwide symbol of motherhood.",
+    "origin": "Christian legend, Mother's Day 1907",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,46)\">\n        <path d=\"M0,0 Q-3,12 -2,28\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M-2,18 Q-12,12 -12,6\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"none\"/>\n        <path d=\"M-8,-8 Q-12,-20 -4,-24 Q0,-26 4,-24 Q12,-20 8,-8 Q4,-4 0,-2 Q-4,-4 -8,-8Z\" fill=\"#bbb\"/>\n        <path d=\"M-14,-10 Q-18,-20 -10,-24 Q-4,-20 -8,-8 Q-10,-4 -14,-10Z\" fill=\"#999\" opacity=\".8\"/>\n        <path d=\"M14,-10 Q18,-20 10,-24 Q4,-20 8,-8 Q10,-4 14,-10Z\" fill=\"#999\" opacity=\".8\"/>\n        <path d=\"M-4,-6 Q-8,-16 -2,-22 Q0,-14 0,-2 Q-2,-2 -4,-6Z\" fill=\"#ddd\" opacity=\".5\"/>\n        <path d=\"M4,-6 Q8,-16 2,-22 Q0,-14 0,-2 Q2,-2 4,-6Z\" fill=\"#ddd\" opacity=\".5\"/>\n      </g>\n    </svg>"
+  },
+  "magnolia": {
+    "name": "Magnolia",
+    "tags": [
+      "hope",
+      "loyalty"
+    ],
+    "meaning": "Dignity, nobility, and perseverance. Magnolias are among the oldest flowering plants on Earth — they evolved ~95 million years ago before bees existed, pollinated by beetles. In the American South they symbolize endurance. In China they represent purity of spirit and are associated with the Tang dynasty court.",
+    "origin": "Chinese Tang dynasty, Southern US folklore",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,48)\">\n        <path d=\"M0,0 Q-2,12 -1,28\" stroke=\"#444\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M-1,18 Q-12,12 -12,6\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"none\"/>\n        <ellipse cx=\"-12\" cy=\"-18\" rx=\"6\" ry=\"13\" fill=\"#eee\" stroke=\"#999\" stroke-width=\".5\" transform=\"rotate(-30,-12,-18)\"/>\n        <ellipse cx=\"12\" cy=\"-18\" rx=\"6\" ry=\"13\" fill=\"#ddd\" stroke=\"#999\" stroke-width=\".5\" transform=\"rotate(30,12,-18)\"/>\n        <ellipse cx=\"0\" cy=\"-24\" rx=\"6\" ry=\"13\" fill=\"#f0f0f0\" stroke=\"#999\" stroke-width=\".5\"/>\n        <ellipse cx=\"-14\" cy=\"-8\" rx=\"5\" ry=\"11\" fill=\"#e8e8e8\" stroke=\"#999\" stroke-width=\".5\" transform=\"rotate(-70,-14,-8)\"/>\n        <ellipse cx=\"14\" cy=\"-8\" rx=\"5\" ry=\"11\" fill=\"#eee\" stroke=\"#999\" stroke-width=\".5\" transform=\"rotate(70,14,-8)\"/>\n        <ellipse cx=\"0\" cy=\"-14\" rx=\"5\" ry=\"10\" fill=\"#f8f8f8\"/>\n        <ellipse cx=\"0\" cy=\"-14\" rx=\"3\" ry=\"5\" fill=\"#888\"/>\n        <ellipse cx=\"0\" cy=\"-14\" rx=\"2\" ry=\"4\" fill=\"#666\"/>\n      </g>\n    </svg>"
+  },
+  "poppy-red": {
+    "name": "Red Poppy",
+    "tags": [
+      "memory",
+      "grief"
+    ],
+    "meaning": "Remembrance of fallen soldiers. Poppies grew wild over the disturbed soil of WWI battlefields in Flanders, Belgium. After Lieutenant Colonel John McCrae's 1915 poem \"In Flanders Fields,\" the red poppy became the international symbol of wartime sacrifice. Worn every November 11th (Remembrance Day).",
+    "origin": "John McCrae, 1915 — Flanders, Belgium",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,46)\">\n        <path d=\"M0,0 Q-4,10 -3,26\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M-3,16 Q-14,10 -14,4 Q-8,10 -3,16\" fill=\"#555\"/>\n        <ellipse cx=\"-10\" cy=\"-14\" rx=\"10\" ry=\"13\" fill=\"#111\" opacity=\".85\" transform=\"rotate(-20,-10,-14)\"/>\n        <ellipse cx=\"10\" cy=\"-14\" rx=\"10\" ry=\"13\" fill=\"#222\" opacity=\".85\" transform=\"rotate(20,10,-14)\"/>\n        <ellipse cx=\"-6\" cy=\"-22\" rx=\"9\" ry=\"12\" fill=\"#111\" opacity=\".9\" transform=\"rotate(-10,-6,-22)\"/>\n        <ellipse cx=\"6\" cy=\"-22\" rx=\"9\" ry=\"12\" fill=\"#222\" opacity=\".9\" transform=\"rotate(10,6,-22)\"/>\n        <circle cx=\"0\" cy=\"-14\" r=\"7\" fill=\"#000\"/>\n        <circle cx=\"-2\" cy=\"-15\" r=\"1.5\" fill=\"#333\" opacity=\".8\"/>\n        <circle cx=\"2\" cy=\"-13\" r=\"1.5\" fill=\"#333\" opacity=\".8\"/>\n      </g>\n    </svg>"
+  },
+  "chrysanthemum": {
+    "name": "Chrysanthemum",
+    "tags": [
+      "loyalty",
+      "grief"
+    ],
+    "meaning": "Long life and fidelity in Asia — but grief in Europe. In Japan it is the Imperial family's emblem, symbolizing longevity and rebirth. In China it represents autumn and renewal. In France, Italy, and Belgium it is strictly a funeral flower, placed on graves. Context matters enormously with this one.",
+    "origin": "Chinese cultivation c. 15th century BC",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <g transform=\"translate(40,44)\">\n        <path d=\"M0,2 Q-2,14 -1,30\" stroke=\"#333\" stroke-width=\"2\" fill=\"none\"/>\n        <path d=\"M-1,20 Q-12,14 -12,8\" stroke=\"#555\" stroke-width=\"1.5\" fill=\"none\"/>\n        <g opacity=\".9\">\n          <ellipse cx=\"0\" cy=\"-20\" rx=\"3\" ry=\"9\" fill=\"#ccc\"/>\n          <ellipse cx=\"8\" cy=\"-18\" rx=\"3\" ry=\"9\" fill=\"#bbb\" transform=\"rotate(40,8,-18)\"/>\n          <ellipse cx=\"14\" cy=\"-12\" rx=\"3\" ry=\"9\" fill=\"#ccc\" transform=\"rotate(80,14,-12)\"/>\n          <ellipse cx=\"15\" cy=\"-4\" rx=\"3\" ry=\"9\" fill=\"#bbb\" transform=\"rotate(110,15,-4)\"/>\n          <ellipse cx=\"12\" cy=\"6\" rx=\"3\" ry=\"9\" fill=\"#ccc\" transform=\"rotate(140,12,6)\"/>\n          <ellipse cx=\"4\" cy=\"10\" rx=\"3\" ry=\"9\" fill=\"#bbb\" transform=\"rotate(170,4,10)\"/>\n          <ellipse cx=\"-4\" cy=\"10\" rx=\"3\" ry=\"9\" fill=\"#ccc\" transform=\"rotate(-170,-4,10)\"/>\n          <ellipse cx=\"-12\" cy=\"6\" rx=\"3\" ry=\"9\" fill=\"#bbb\" transform=\"rotate(-140,-12,6)\"/>\n          <ellipse cx=\"-15\" cy=\"-4\" rx=\"3\" ry=\"9\" fill=\"#ccc\" transform=\"rotate(-110,-15,-4)\"/>\n          <ellipse cx=\"-14\" cy=\"-12\" rx=\"3\" ry=\"9\" fill=\"#bbb\" transform=\"rotate(-80,-14,-12)\"/>\n          <ellipse cx=\"-8\" cy=\"-18\" rx=\"3\" ry=\"9\" fill=\"#ccc\" transform=\"rotate(-40,-8,-18)\"/>\n        </g>\n        <circle cx=\"0\" cy=\"-8\" r=\"6\" fill=\"#444\"/>\n        <circle cx=\"0\" cy=\"-8\" r=\"3\" fill=\"#222\"/>\n      </g>\n    </svg>"
+  },
+  "ribbon-red": {
+    "name": "Red Ribbon",
+    "tags": [
+      "love"
+    ],
+    "meaning": "Passion and love, tied together.",
+    "origin": "",
+    "svg": "<svg viewBox=\"0 0 80 60\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M40,30 Q20,10 8,18 Q-2,28 22,32 Q40,36 40,30 Q40,36 58,32 Q82,28 72,18 Q60,10 40,30Z\" fill=\"#111\" stroke=\"#333\" stroke-width=\"1\"/>\n      <ellipse cx=\"40\" cy=\"30\" rx=\"6\" ry=\"6\" fill=\"#000\"/>\n      <path d=\"M40,30 L33,55 Q37,57 40,54 L43,54 Q47,57 47,55Z\" fill=\"#111\" stroke=\"#333\" stroke-width=\".8\"/>\n      <path d=\"M40,30 L33,55\" stroke=\"#444\" stroke-width=\".5\" fill=\"none\"/>\n      <path d=\"M40,30 L47,55\" stroke=\"#444\" stroke-width=\".5\" fill=\"none\"/>\n    </svg>"
+  },
+  "ribbon-simple": {
+    "name": "Simple Bow",
+    "tags": [
+      "joy"
+    ],
+    "meaning": "A neat, thoughtful finish.",
+    "origin": "",
+    "svg": "<svg viewBox=\"0 0 80 60\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M40,28 Q20,8 8,18 Q-2,28 22,32 Q40,36 40,28 Q40,36 58,32 Q82,28 72,18 Q60,8 40,28Z\" fill=\"#666\" stroke=\"#333\" stroke-width=\"1\"/>\n      <ellipse cx=\"40\" cy=\"28\" rx=\"5\" ry=\"5\" fill=\"#444\"/>\n      <path d=\"M40,28 L34,54 Q38,56 40,53 L42,53 Q46,56 46,54Z\" fill=\"#666\" stroke=\"#333\" stroke-width=\".8\"/>\n    </svg>"
+  },
+  "ribbon-double": {
+    "name": "Double Bow",
+    "tags": [
+      "joy"
+    ],
+    "meaning": "Extra care and celebration.",
+    "origin": "",
+    "svg": "<svg viewBox=\"0 0 80 70\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M40,25 Q22,6 10,14 Q0,24 24,28 Q40,32 40,25 Q40,32 56,28 Q80,24 70,14 Q58,6 40,25Z\" fill=\"#888\" stroke=\"#555\" stroke-width=\"1\"/>\n      <path d=\"M40,35 Q24,18 12,26 Q2,36 26,38 Q40,40 40,35 Q40,40 54,38 Q78,36 68,26 Q56,18 40,35Z\" fill=\"#555\" stroke=\"#333\" stroke-width=\"1\"/>\n      <ellipse cx=\"40\" cy=\"30\" rx=\"5\" ry=\"5\" fill=\"#333\"/>\n      <path d=\"M40,35 L34,58 Q38,60 40,57 L42,57 Q46,60 46,58Z\" fill=\"#555\" stroke=\"#333\" stroke-width=\".8\"/>\n    </svg>"
+  },
+  "wrap-kraft": {
+    "name": "Kraft Wrap",
+    "tags": [
+      "loyalty"
+    ],
+    "meaning": "Rustic and handmade — the charm of something wrapped with care.",
+    "origin": "",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M10,70 L30,30 L50,30 L70,70Z\" fill=\"#bbb\" stroke=\"#333\" stroke-width=\"1.5\"/>\n      <path d=\"M10,70 L30,30 L50,30 L70,70Z\" fill=\"none\" stroke=\"#666\" stroke-width=\".5\" stroke-dasharray=\"3,3\"/>\n      <path d=\"M30,30 L40,10 L50,30\" fill=\"#999\" stroke=\"#333\" stroke-width=\"1\"/>\n      <line x1=\"30\" y1=\"30\" x2=\"10\" y2=\"70\" stroke=\"#888\" stroke-width=\".5\"/>\n      <line x1=\"50\" y1=\"30\" x2=\"70\" y2=\"70\" stroke=\"#888\" stroke-width=\".5\"/>\n    </svg>"
+  },
+  "wrap-newsprint": {
+    "name": "Newsprint Wrap",
+    "tags": [
+      "memory"
+    ],
+    "meaning": "Old-fashioned, unpretentious, full of character.",
+    "origin": "",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M10,70 L30,30 L50,30 L70,70Z\" fill=\"#e8e8e8\" stroke=\"#333\" stroke-width=\"1.5\"/>\n      <line x1=\"14\" y1=\"62\" x2=\"42\" y2=\"36\" stroke=\"#aaa\" stroke-width=\".5\"/>\n      <line x1=\"18\" y1=\"68\" x2=\"46\" y2=\"34\" stroke=\"#aaa\" stroke-width=\".5\"/>\n      <line x1=\"24\" y1=\"70\" x2=\"50\" y2=\"30\" stroke=\"#aaa\" stroke-width=\".5\"/>\n      <line x1=\"32\" y1=\"70\" x2=\"56\" y2=\"34\" stroke=\"#aaa\" stroke-width=\".5\"/>\n      <line x1=\"40\" y1=\"70\" x2=\"62\" y2=\"40\" stroke=\"#aaa\" stroke-width=\".5\"/>\n      <path d=\"M30,30 L40,10 L50,30\" fill=\"#d0d0d0\" stroke=\"#333\" stroke-width=\"1\"/>\n    </svg>"
+  },
+  "wrap-white": {
+    "name": "White Wrap",
+    "tags": [
+      "hope"
+    ],
+    "meaning": "Clean, minimal, and quietly elegant.",
+    "origin": "",
+    "svg": "<svg viewBox=\"0 0 80 80\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path d=\"M10,70 L30,30 L50,30 L70,70Z\" fill=\"#fff\" stroke=\"#333\" stroke-width=\"1.5\"/>\n      <path d=\"M30,30 L40,10 L50,30\" fill=\"#eee\" stroke=\"#333\" stroke-width=\"1\"/>\n      <line x1=\"30\" y1=\"30\" x2=\"10\" y2=\"70\" stroke=\"#ccc\" stroke-width=\".5\"/>\n      <line x1=\"50\" y1=\"30\" x2=\"70\" y2=\"70\" stroke=\"#ccc\" stroke-width=\".5\"/>\n    </svg>"
+  }
+};
+
+// ── APP ──
 const imageStore = {};
 
-// ─────────────────────────────────────────
-//  BUILD SLOTS
-// ─────────────────────────────────────────
 function buildSlots() {
-  buildGroup(FLOWERS, 'flower-slots');
-  buildGroup(RIBBONS, 'ribbon-slots');
+  buildGroup(FLOWER_META, "flower-slots");
+  buildGroup(RIBBON_META, "ribbon-slots");
 }
 
 function buildGroup(arr, containerId) {
   const container = document.getElementById(containerId);
-  arr.forEach(item => {
-    container.appendChild(makeSlot(item));
-  });
+  arr.forEach(item => container.appendChild(makeSlot(item)));
 }
 
 function makeSlot(item) {
-  const slot = document.createElement('div');
-  slot.className = 'slot';
+  const slot = document.createElement("div");
+  slot.className = "slot";
   slot.dataset.id = item.id;
 
-  // Check if item already has an imgUrl in data.js
-  if (item.imgUrl) {
-    imageStore[item.id] = { dataUrl: item.imgUrl, filename: item.name };
-    slot.classList.add('has-image');
+  const dropZone = document.createElement("div");
+  dropZone.className = "slot-drop";
+
+  // SVG preview (shown until image is assigned)
+  const svgSrc = SVG_MAP[item.id];
+  if (svgSrc) {
+    const preview = document.createElement("div");
+    preview.className = "svg-preview";
+    preview.innerHTML = svgSrc;
+    const svgEl = preview.querySelector("svg");
+    if (svgEl) { svgEl.setAttribute("width","60"); svgEl.setAttribute("height","60"); }
+    dropZone.appendChild(preview);
   }
 
-  const existingImg = imageStore[item.id] ? `<img src="${imageStore[item.id].dataUrl}" alt="${item.name}">` : '';
+  const hint = document.createElement("span");
+  hint.className = "drop-hint";
+  hint.innerHTML = "<span class=\"drop-icon\">&#128247;</span>click or drop<br>image here";
+  dropZone.appendChild(hint);
 
-  slot.innerHTML = `
-    <button class="slot-clear" onclick="clearSlot('${item.id}', event)">✕</button>
-    <div class="slot-drop" data-id="${item.id}">
-      ${existingImg}
-      <span class="drop-hint">
-        <span class="drop-icon">📷</span>
-        click or drop<br>image here
-      </span>
-    </div>
-    <div class="slot-name">${item.name}</div>
-    <div class="slot-status">${imageStore[item.id] ? '✓ image set' : 'using drawn SVG'}</div>
-    <input type="file" class="slot-file" accept="image/png,image/jpeg,image/svg+xml" data-id="${item.id}">
-  `;
+  const clearBtn = document.createElement("button");
+  clearBtn.className = "slot-clear";
+  clearBtn.textContent = "✕";
+  clearBtn.onclick = e => clearSlot(item.id, e);
 
-  // Click on drop zone → file picker
-  const dropZone = slot.querySelector('.slot-drop');
-  const fileInput = slot.querySelector('.slot-file');
+  const nameEl = document.createElement("div");
+  nameEl.className = "slot-name";
+  nameEl.textContent = item.name;
 
-  dropZone.addEventListener('click', () => fileInput.click());
+  const statusEl = document.createElement("div");
+  statusEl.className = "slot-status";
+  statusEl.textContent = "using drawn SVG";
 
-  fileInput.addEventListener('change', e => {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.className = "slot-file";
+  fileInput.accept = "image/png,image/jpeg,image/svg+xml";
+  fileInput.addEventListener("change", e => {
     if (!e.target.files[0]) return;
     loadFile(e.target.files[0], item.id);
-    e.target.value = '';
+    e.target.value = "";
   });
 
-  // Drag and drop onto slot
-  slot.addEventListener('dragover', e => {
-    e.preventDefault();
-    slot.classList.add('drag-over');
-  });
-  slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
-  slot.addEventListener('drop', e => {
-    e.preventDefault();
-    slot.classList.remove('drag-over');
+  dropZone.addEventListener("click", () => fileInput.click());
+  slot.addEventListener("dragover", e => { e.preventDefault(); slot.classList.add("drag-over"); });
+  slot.addEventListener("dragleave", () => slot.classList.remove("drag-over"));
+  slot.addEventListener("drop", e => {
+    e.preventDefault(); slot.classList.remove("drag-over");
     const file = e.dataTransfer.files[0];
     if (file && file.type.match(/^image\//)) loadFile(file, item.id);
   });
 
+  slot.appendChild(clearBtn);
+  slot.appendChild(dropZone);
+  slot.appendChild(nameEl);
+  slot.appendChild(statusEl);
+  slot.appendChild(fileInput);
   return slot;
 }
 
-// ─────────────────────────────────────────
-//  LOAD FILE → STORE
-// ─────────────────────────────────────────
 function loadFile(file, itemId) {
   const reader = new FileReader();
   reader.onload = e => {
-    const dataUrl = e.target.result;
-    imageStore[itemId] = { dataUrl, filename: file.name };
-    updateSlotUI(itemId, dataUrl);
+    imageStore[itemId] = e.target.result;
+    updateSlotUI(itemId, e.target.result);
     updateProgress();
   };
   reader.readAsDataURL(file);
 }
 
 function updateSlotUI(itemId, dataUrl) {
-  const slot     = document.querySelector(`.slot[data-id="${itemId}"]`);
-  const dropZone = slot.querySelector('.slot-drop');
-  const status   = slot.querySelector('.slot-status');
-
-  // Set image
-  let img = dropZone.querySelector('img');
+  const slot = document.querySelector(".slot[data-id=\"" + itemId + "\"]");
+  const dropZone = slot.querySelector(".slot-drop");
+  let img = dropZone.querySelector("img");
   if (!img) {
-    img = document.createElement('img');
-    img.alt = itemId;
+    img = document.createElement("img"); img.alt = itemId;
     dropZone.appendChild(img);
   }
   img.src = dataUrl;
-
-  status.textContent = '✓ image set';
-  slot.classList.add('has-image');
+  slot.querySelector(".slot-status").textContent = "\u2713 image set";
+  slot.classList.add("has-image");
 }
 
-// ─────────────────────────────────────────
-//  CLEAR SLOT
-// ─────────────────────────────────────────
 function clearSlot(itemId, e) {
-  e.stopPropagation();
+  e && e.stopPropagation();
   delete imageStore[itemId];
-
-  const slot     = document.querySelector(`.slot[data-id="${itemId}"]`);
-  const dropZone = slot.querySelector('.slot-drop');
-  const status   = slot.querySelector('.slot-status');
-  const img      = dropZone.querySelector('img');
-
+  const slot = document.querySelector(".slot[data-id=\"" + itemId + "\"]");
+  const img = slot && slot.querySelector(".slot-drop img");
   if (img) img.remove();
-  status.textContent = 'using drawn SVG';
-  slot.classList.remove('has-image');
+  if (slot) {
+    slot.querySelector(".slot-status").textContent = "using drawn SVG";
+    slot.classList.remove("has-image");
+  }
   updateProgress();
 }
 
 function clearAll() {
-  if (!confirm('Clear all assigned images?')) return;
-  Object.keys(imageStore).forEach(id => {
-    // Only clear ones that were newly assigned (not from original data.js imgUrl)
-    clearSlotById(id);
-  });
+  if (!confirm("Clear all assigned images?")) return;
+  [...document.querySelectorAll(".slot.has-image")].forEach(s => clearSlot(s.dataset.id));
   updateProgress();
 }
 
-function clearSlotById(itemId) {
-  delete imageStore[itemId];
-  const slot = document.querySelector(`.slot[data-id="${itemId}"]`);
-  if (!slot) return;
-  const img = slot.querySelector('.slot-drop img');
-  if (img) img.remove();
-  slot.querySelector('.slot-status').textContent = 'using drawn SVG';
-  slot.classList.remove('has-image');
-}
-
-// ─────────────────────────────────────────
-//  PROGRESS
-// ─────────────────────────────────────────
 function updateProgress() {
   const count = Object.keys(imageStore).length;
-  const total = FLOWERS.length + RIBBONS.length;
-  document.getElementById('progress-text').innerHTML =
-    `<strong>${count}</strong> of ${total} items have custom images`;
+  const total = FLOWER_META.length + RIBBON_META.length;
+  document.getElementById("progress-text").innerHTML =
+    "<strong>" + count + "</strong> of " + total + " items have custom images";
 }
 
-// ─────────────────────────────────────────
-//  GENERATE + DOWNLOAD data.js
-// ─────────────────────────────────────────
-function downloadDataJs() {
+function serializeItem(item, isRibbon) {
+  const orig = ORIG[item.id] || {};
   const lines = [];
-
-  lines.push(`/* ============================================================`);
-  lines.push(`   BLOOM BUILDER — DATA.JS`);
-  lines.push(`   Generated by the Image Setup Tool.`);
-  lines.push(`   Do not edit the imgUrl lines manually — they are base64 images.`);
-  lines.push(`   ============================================================ */`);
-  lines.push(``);
-  lines.push(`const FLOWERS = [`);
-
-  FLOWERS.forEach((item, i) => {
-    lines.push(`  {`);
-    lines.push(`    id: ${JSON.stringify(item.id)},`);
-    lines.push(`    name: ${JSON.stringify(item.name)},`);
-    lines.push(`    tags: ${JSON.stringify(item.tags || [])},`);
-    lines.push(`    meaning: ${JSON.stringify(item.meaning || '')},`);
-    lines.push(`    origin: ${JSON.stringify(item.origin || '')},`);
-
-    if (imageStore[item.id]) {
-      // Use the uploaded image
-      lines.push(`    imgUrl: ${JSON.stringify(imageStore[item.id].dataUrl)},`);
-    } else {
-      // Keep original SVG (or imgUrl if it had one)
-      if (item.imgUrl) {
-        lines.push(`    imgUrl: ${JSON.stringify(item.imgUrl)},`);
-      } else {
-        // Preserve the SVG — use template literal
-        const svgClean = (item.svg || '').trim();
-        lines.push(`    svg: \`${svgClean}\`,`);
-      }
-    }
-
-    lines.push(`  }${i < FLOWERS.length - 1 ? ',' : ''}`);
-  });
-
-  lines.push(`];`);
-  lines.push(``);
-  lines.push(`const RIBBONS = [`);
-
-  RIBBONS.forEach((item, i) => {
-    lines.push(`  {`);
-    lines.push(`    id: ${JSON.stringify(item.id)},`);
-    lines.push(`    name: ${JSON.stringify(item.name)},`);
-    lines.push(`    tags: ${JSON.stringify(item.tags || [])},`);
-    lines.push(`    meaning: ${JSON.stringify(item.meaning || '')},`);
-
-    if (imageStore[item.id]) {
-      lines.push(`    imgUrl: ${JSON.stringify(imageStore[item.id].dataUrl)},`);
-    } else {
-      if (item.imgUrl) {
-        lines.push(`    imgUrl: ${JSON.stringify(item.imgUrl)},`);
-      } else {
-        const svgClean = (item.svg || '').trim();
-        lines.push(`    svg: \`${svgClean}\`,`);
-      }
-    }
-
-    lines.push(`  }${i < RIBBONS.length - 1 ? ',' : ''}`);
-  });
-
-  lines.push(`];`);
-
-  const content = lines.join('\n');
-  const blob    = new Blob([content], { type: 'text/javascript' });
-  const url     = URL.createObjectURL(blob);
-  const a       = document.createElement('a');
-  a.href        = url;
-  a.download    = 'data.js';
-  a.click();
-  URL.revokeObjectURL(url);
-
-  document.getElementById('success-banner').classList.add('visible');
-  document.getElementById('success-banner').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  lines.push("  {");
+  lines.push("    id: " + JSON.stringify(item.id) + ",");
+  lines.push("    name: " + JSON.stringify(item.name) + ",");
+  lines.push("    tags: " + JSON.stringify(item.tags || []) + ",");
+  lines.push("    meaning: " + JSON.stringify(item.meaning || "") + ",");
+  if (!isRibbon) lines.push("    origin: " + JSON.stringify(item.origin || "") + ",");
+  if (imageStore[item.id]) {
+    lines.push("    imgUrl: " + JSON.stringify(imageStore[item.id]) + ",");
+  } else if (orig.svg) {
+    lines.push("    svg: `" + orig.svg.replace(/`/g, "\\`") + "`,");
+  }
+  lines.push("  }");
+  return lines.join("\n");
 }
 
-// ─────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────
+function downloadDataJs() {
+  const out = [];
+  out.push("/* ============================================================");
+  out.push("   BLOOM BUILDER \u2014 DATA.JS");
+  out.push("   Generated by the Image Setup Tool.");
+  out.push("   ============================================================ */");
+  out.push("");
+  out.push("const FLOWERS = [");
+  FLOWER_META.forEach((item, i) => {
+    out.push(serializeItem(item, false) + (i < FLOWER_META.length - 1 ? "," : ""));
+  });
+  out.push("];");
+  out.push("");
+  out.push("const RIBBONS = [");
+  RIBBON_META.forEach((item, i) => {
+    out.push(serializeItem(item, true) + (i < RIBBON_META.length - 1 ? "," : ""));
+  });
+  out.push("];");
+
+  const blob = new Blob([out.join("\n")], { type: "text/javascript" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href = url; a.download = "data.js"; a.click();
+  URL.revokeObjectURL(url);
+  document.getElementById("success-banner").classList.add("visible");
+  document.getElementById("success-banner").scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
 buildSlots();
 updateProgress();
 </script>
