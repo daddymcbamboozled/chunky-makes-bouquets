@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloom Builder — Image Setup Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=Over+the+Rainbow&family=Give+You+Glory&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #111;
+    --red: #cc1a1a;
+    --paper: #f7f4ef;
+    --paper2: #edeae3;
+    --faint: #bbb;
+    --white: #fff;
+    --green: #1a7a3a;
+    --shadow: 4px 4px 0 var(--ink);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Give You Glory', cursive;
+    background: var(--paper2);
+    color: var(--ink);
+    min-height: 100vh;
+    background-image:
+      linear-gradient(rgba(17,17,17,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(17,17,17,.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  header {
+    background: var(--ink);
+    color: var(--white);
+    padding: 1rem 2rem;
+    display: flex; align-items: center; gap: 1rem;
+    border-bottom: 4px solid var(--red);
+  }
+
+  header h1 {
+    font-family: 'Over the Rainbow', cursive;
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+  header h1 span { color: var(--red); }
+  header p { font-size: 0.78rem; opacity: .65; margin-top: .2rem; letter-spacing: .05em; }
+
+  .stamp {
+    width: 48px; height: 48px;
+    border: 2px solid var(--white);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+    box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px var(--white);
+  }
+
+  .page { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  /* ── INTRO BOX ── */
+  .intro {
+    background: var(--white);
+    border: 2px solid var(--ink);
+    box-shadow: var(--shadow);
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 2rem;
+    position: relative;
+  }
+  .intro::before, .intro::after {
+    content: ''; position: absolute;
+    width: 14px; height: 14px;
+    border-color: var(--red); border-style: solid;
+  }
+  .intro::before { top: 5px; left: 5px;  border-width: 2px 0 0 2px; }
+  .intro::after  { bottom: 5px; right: 5px; border-width: 0 2px 2px 0; }
+
+  .intro h2 {
+    font-family: 'Over the Rainbow', cursive;
+    font-size: 1.3rem; margin-bottom: .6rem;
+  }
+  .intro ol { padding-left: 1.4rem; }
+  .intro li { margin-bottom: .4rem; line-height: 1.5; font-size: .95rem; }
+  .intro li strong { color: var(--red); }
+  .intro .note {
+    margin-top: .8rem; padding: .6rem .8rem;
+    background: var(--paper2); border-left: 3px solid var(--red);
+    font-size: .82rem; line-height: 1.5; color: #444;
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'Over the Rainbow', cursive;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 2px solid var(--ink);
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1; height: 2px;
+    background: repeating-linear-gradient(
+      90deg, var(--faint) 0, var(--faint) 5px, transparent 5px, transparent 10px
+    );
+  }
+
+  /* ── SLOTS GRID ── */
+  .slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 2.5rem;
+  }
+
+  .slot {
+    background: var(--white);
+    border: 2px solid var(--ink);
+    box-shadow: var(--shadow);
+    padding: 10px 8px 8px;
+    text-align: center;
+    position: relative;
+    transition: box-shadow .1s, transform .1s;
+  }
+
+  .slot.has-image { border-color: var(--green); box-shadow: 4px 4px 0 var(--green); }
+  .slot.drag-over { border-color: var(--red); box-shadow: 4px 4px 0 var(--red); transform: scale(1.03); }
+
+  /* Drop zone inside slot */
+  .slot-drop {
+    width: 100%; aspect-ratio: 1;
+    background: var(--paper);
+    border: 2px dashed var(--faint);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .15s, background .15s;
+    margin-bottom: 6px;
+  }
+  .slot-drop:hover, .slot.drag-over .slot-drop {
+    border-color: var(--red);
+    background: #fdf0f0;
+  }
+
+  .slot-drop img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: contain;
+    padding: 4px;
+  }
+
+  .slot-drop .drop-hint {
+    font-size: .72rem; color: var(--faint);
+    line-height: 1.4; padding: .4rem;
+    pointer-events: none;
+  }
+  .slot-drop .drop-icon { font-size: 1.6rem; display: block; opacity: .35; margin-bottom: .2rem; }
+
+  /* Hidden when image present */
+  .slot.has-image .drop-hint { display: none; }
+
+  .slot-name {
+    font-family: 'Give You Glory', cursive;
+    font-size: .75rem; color: var(--ink);
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+
+  .slot-status {
+    font-size: .62rem;
+    font-family: 'Give You Glory', cursive;
+    color: var(--faint);
+  }
+  .slot.has-image .slot-status { color: var(--green); }
+
+  /* Clear button */
+  .slot-clear {
+    position: absolute; top: 4px; right: 4px;
+    background: var(--ink); color: var(--white);
+    border: none; font-size: .6rem;
+    padding: 1px 5px; cursor: pointer;
+    font-family: 'Give You Glory', cursive;
+    display: none; z-index: 2;
+  }
+  .slot.has-image .slot-clear { display: block; }
+  .slot-clear:hover { background: var(--red); }
+
+  /* Hidden file inputs */
+  .slot-file { display: none; }
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
+    position: sticky; bottom: 0;
+    background: var(--white);
+    border-top: 2px solid var(--ink);
+    box-shadow: 0 -3px 0 var(--ink);
+    padding: .9rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    z-index: 50;
+  }
+
+  .progress-text {
+    font-family: 'Give You Glory', cursive;
+    font-size: .9rem; color: var(--ink);
+    flex: 1;
+  }
+  .progress-text strong { color: var(--red); font-family: 'Over the Rainbow', cursive; }
+
+  .btn {
+    font-family: 'Over the Rainbow', cursive;
+    font-size: 1rem;
+    padding: .5rem 1.2rem;
+    border: 2px solid var(--ink);
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    background: var(--white); color: var(--ink);
+    transition: transform .08s, box-shadow .08s;
+  }
+  .btn:hover  { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+  .btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 var(--ink); }
+  .btn-green  { background: var(--green); color: var(--white); border-color: #0f5a2a; box-shadow: 4px 4px 0 #0f5a2a; }
+  .btn-green:hover { box-shadow: 6px 6px 0 #0f5a2a; }
+  .btn-red    { background: var(--red); color: var(--white); border-color: #991010; box-shadow: 4px 4px 0 #991010; }
+
+  /* ── SUCCESS MESSAGE ── */
+  .success-banner {
+    display: none;
+    background: var(--green);
+    color: var(--white);
+    border: 2px solid #0f5a2a;
+    padding: .9rem 1.2rem;
+    margin: 1.5rem 0;
+    font-size: .95rem;
+    line-height: 1.6;
+    box-shadow: 4px 4px 0 #0f5a2a;
+  }
+  .success-banner.visible { display: block; }
+  .success-banner strong { font-family: 'Over the Rainbow', cursive; font-size: 1.1rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="stamp">✿</div>
+  <div>
+    <h1><span>Bloom</span> Builder — Image Setup</h1>
+    <p>One-time tool to swap flower images. Use this once, then upload the result to GitHub.</p>
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="intro">
+    <h2>How this works</h2>
+    <ol>
+      <li>For each flower, ribbon, or wrap below — <strong>click its box</strong> or <strong>drag an image onto it</strong> to set a picture.</li>
+      <li>You can skip any you're happy leaving as-is. Ones you skip keep their existing drawing.</li>
+      <li>When you're done, click <strong>Download data.js</strong> at the bottom.</li>
+      <li>In your GitHub repository, delete the old <strong>data.js</strong> and upload this new one. That's it — your images are live for everyone.</li>
+    </ol>
+    <div class="note">
+      ⓘ Images are embedded directly into the file, so nothing gets lost on refresh and no extra image files are needed.
+      PNG, JPG, and SVG all work. Smaller files (under 500kb each) are recommended so the page loads fast.
+    </div>
+  </div>
+
+  <div class="success-banner" id="success-banner">
+    <strong>✓ data.js downloaded!</strong><br>
+    Now go to your GitHub repository → find the existing <code>data.js</code> → click it → click the pencil icon →
+    select "Delete file" and commit, then upload this new file. Your images will be live within 60 seconds.
+  </div>
+
+  <div class="section-title">🌸 Flowers</div>
+  <div class="slots-grid" id="flower-slots"></div>
+
+  <div class="section-title">🎀 Ribbons &amp; Wraps</div>
+  <div class="slots-grid" id="ribbon-slots"></div>
+
+</div><!-- /page -->
+
+<div class="bottom-bar">
+  <div class="progress-text" id="progress-text">0 images assigned</div>
+  <button class="btn" onclick="clearAll()">Clear All</button>
+  <button class="btn btn-green" onclick="downloadDataJs()">⬇ Download data.js</button>
+</div>
+
+<!-- The existing data.js must be loaded so we can read the existing content -->
+<script src="data.js"></script>
+<script>
+// ─────────────────────────────────────────
+//  IMAGE STORE — keyed by item id
+//  { id: { dataUrl, filename } }
+// ─────────────────────────────────────────
+const imageStore = {};
+
+// ─────────────────────────────────────────
+//  BUILD SLOTS
+// ─────────────────────────────────────────
+function buildSlots() {
+  buildGroup(FLOWERS, 'flower-slots');
+  buildGroup(RIBBONS, 'ribbon-slots');
+}
+
+function buildGroup(arr, containerId) {
+  const container = document.getElementById(containerId);
+  arr.forEach(item => {
+    container.appendChild(makeSlot(item));
+  });
+}
+
+function makeSlot(item) {
+  const slot = document.createElement('div');
+  slot.className = 'slot';
+  slot.dataset.id = item.id;
+
+  // Check if item already has an imgUrl in data.js
+  if (item.imgUrl) {
+    imageStore[item.id] = { dataUrl: item.imgUrl, filename: item.name };
+    slot.classList.add('has-image');
+  }
+
+  const existingImg = imageStore[item.id] ? `<img src="${imageStore[item.id].dataUrl}" alt="${item.name}">` : '';
+
+  slot.innerHTML = `
+    <button class="slot-clear" onclick="clearSlot('${item.id}', event)">✕</button>
+    <div class="slot-drop" data-id="${item.id}">
+      ${existingImg}
+      <span class="drop-hint">
+        <span class="drop-icon">📷</span>
+        click or drop<br>image here
+      </span>
+    </div>
+    <div class="slot-name">${item.name}</div>
+    <div class="slot-status">${imageStore[item.id] ? '✓ image set' : 'using drawn SVG'}</div>
+    <input type="file" class="slot-file" accept="image/png,image/jpeg,image/svg+xml" data-id="${item.id}">
+  `;
+
+  // Click on drop zone → file picker
+  const dropZone = slot.querySelector('.slot-drop');
+  const fileInput = slot.querySelector('.slot-file');
+
+  dropZone.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', e => {
+    if (!e.target.files[0]) return;
+    loadFile(e.target.files[0], item.id);
+    e.target.value = '';
+  });
+
+  // Drag and drop onto slot
+  slot.addEventListener('dragover', e => {
+    e.preventDefault();
+    slot.classList.add('drag-over');
+  });
+  slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
+  slot.addEventListener('drop', e => {
+    e.preventDefault();
+    slot.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.match(/^image\//)) loadFile(file, item.id);
+  });
+
+  return slot;
+}
+
+// ─────────────────────────────────────────
+//  LOAD FILE → STORE
+// ─────────────────────────────────────────
+function loadFile(file, itemId) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    imageStore[itemId] = { dataUrl, filename: file.name };
+    updateSlotUI(itemId, dataUrl);
+    updateProgress();
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateSlotUI(itemId, dataUrl) {
+  const slot     = document.querySelector(`.slot[data-id="${itemId}"]`);
+  const dropZone = slot.querySelector('.slot-drop');
+  const status   = slot.querySelector('.slot-status');
+
+  // Set image
+  let img = dropZone.querySelector('img');
+  if (!img) {
+    img = document.createElement('img');
+    img.alt = itemId;
+    dropZone.appendChild(img);
+  }
+  img.src = dataUrl;
+
+  status.textContent = '✓ image set';
+  slot.classList.add('has-image');
+}
+
+// ─────────────────────────────────────────
+//  CLEAR SLOT
+// ─────────────────────────────────────────
+function clearSlot(itemId, e) {
+  e.stopPropagation();
+  delete imageStore[itemId];
+
+  const slot     = document.querySelector(`.slot[data-id="${itemId}"]`);
+  const dropZone = slot.querySelector('.slot-drop');
+  const status   = slot.querySelector('.slot-status');
+  const img      = dropZone.querySelector('img');
+
+  if (img) img.remove();
+  status.textContent = 'using drawn SVG';
+  slot.classList.remove('has-image');
+  updateProgress();
+}
+
+function clearAll() {
+  if (!confirm('Clear all assigned images?')) return;
+  Object.keys(imageStore).forEach(id => {
+    // Only clear ones that were newly assigned (not from original data.js imgUrl)
+    clearSlotById(id);
+  });
+  updateProgress();
+}
+
+function clearSlotById(itemId) {
+  delete imageStore[itemId];
+  const slot = document.querySelector(`.slot[data-id="${itemId}"]`);
+  if (!slot) return;
+  const img = slot.querySelector('.slot-drop img');
+  if (img) img.remove();
+  slot.querySelector('.slot-status').textContent = 'using drawn SVG';
+  slot.classList.remove('has-image');
+}
+
+// ─────────────────────────────────────────
+//  PROGRESS
+// ─────────────────────────────────────────
+function updateProgress() {
+  const count = Object.keys(imageStore).length;
+  const total = FLOWERS.length + RIBBONS.length;
+  document.getElementById('progress-text').innerHTML =
+    `<strong>${count}</strong> of ${total} items have custom images`;
+}
+
+// ─────────────────────────────────────────
+//  GENERATE + DOWNLOAD data.js
+// ─────────────────────────────────────────
+function downloadDataJs() {
+  const lines = [];
+
+  lines.push(`/* ============================================================`);
+  lines.push(`   BLOOM BUILDER — DATA.JS`);
+  lines.push(`   Generated by the Image Setup Tool.`);
+  lines.push(`   Do not edit the imgUrl lines manually — they are base64 images.`);
+  lines.push(`   ============================================================ */`);
+  lines.push(``);
+  lines.push(`const FLOWERS = [`);
+
+  FLOWERS.forEach((item, i) => {
+    lines.push(`  {`);
+    lines.push(`    id: ${JSON.stringify(item.id)},`);
+    lines.push(`    name: ${JSON.stringify(item.name)},`);
+    lines.push(`    tags: ${JSON.stringify(item.tags || [])},`);
+    lines.push(`    meaning: ${JSON.stringify(item.meaning || '')},`);
+    lines.push(`    origin: ${JSON.stringify(item.origin || '')},`);
+
+    if (imageStore[item.id]) {
+      // Use the uploaded image
+      lines.push(`    imgUrl: ${JSON.stringify(imageStore[item.id].dataUrl)},`);
+    } else {
+      // Keep original SVG (or imgUrl if it had one)
+      if (item.imgUrl) {
+        lines.push(`    imgUrl: ${JSON.stringify(item.imgUrl)},`);
+      } else {
+        // Preserve the SVG — use template literal
+        const svgClean = (item.svg || '').trim();
+        lines.push(`    svg: \`${svgClean}\`,`);
+      }
+    }
+
+    lines.push(`  }${i < FLOWERS.length - 1 ? ',' : ''}`);
+  });
+
+  lines.push(`];`);
+  lines.push(``);
+  lines.push(`const RIBBONS = [`);
+
+  RIBBONS.forEach((item, i) => {
+    lines.push(`  {`);
+    lines.push(`    id: ${JSON.stringify(item.id)},`);
+    lines.push(`    name: ${JSON.stringify(item.name)},`);
+    lines.push(`    tags: ${JSON.stringify(item.tags || [])},`);
+    lines.push(`    meaning: ${JSON.stringify(item.meaning || '')},`);
+
+    if (imageStore[item.id]) {
+      lines.push(`    imgUrl: ${JSON.stringify(imageStore[item.id].dataUrl)},`);
+    } else {
+      if (item.imgUrl) {
+        lines.push(`    imgUrl: ${JSON.stringify(item.imgUrl)},`);
+      } else {
+        const svgClean = (item.svg || '').trim();
+        lines.push(`    svg: \`${svgClean}\`,`);
+      }
+    }
+
+    lines.push(`  }${i < RIBBONS.length - 1 ? ',' : ''}`);
+  });
+
+  lines.push(`];`);
+
+  const content = lines.join('\n');
+  const blob    = new Blob([content], { type: 'text/javascript' });
+  const url     = URL.createObjectURL(blob);
+  const a       = document.createElement('a');
+  a.href        = url;
+  a.download    = 'data.js';
+  a.click();
+  URL.revokeObjectURL(url);
+
+  document.getElementById('success-banner').classList.add('visible');
+  document.getElementById('success-banner').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ─────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────
+buildSlots();
+updateProgress();
+</script>
+</body>
+</html>
