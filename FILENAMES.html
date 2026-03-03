@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bloom Builder — Image Filename Reference</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 680px; margin: 2rem auto; padding: 0 1.5rem; color: #111; line-height: 1.6; }
+  h1   { font-size: 1.6rem; border-bottom: 3px solid #cc1a1a; padding-bottom: .4rem; margin-bottom: .3rem; }
+  h2   { font-size: 1.1rem; margin: 1.8rem 0 .5rem; color: #cc1a1a; }
+  p    { font-size: .95rem; color: #444; margin-bottom: 1rem; }
+  .steps { background: #f7f4ef; border: 2px solid #111; padding: 1rem 1.2rem; margin-bottom: 1.8rem; }
+  .steps ol { padding-left: 1.3rem; }
+  .steps li { margin-bottom: .5rem; font-size: .92rem; }
+  .steps code { background: #fff; border: 1px solid #ccc; padding: 1px 5px; font-size: .88em; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; margin-bottom: .5rem; }
+  th    { background: #111; color: #fff; padding: .4rem .7rem; text-align: left; }
+  td    { padding: .38rem .7rem; border-bottom: 1px solid #ddd; }
+  tr:nth-child(even) td { background: #f7f4ef; }
+  .filename { font-family: monospace; font-size: .88rem; color: #cc1a1a; }
+  .tip { font-size: .82rem; color: #888; margin-top: .2rem; }
+  @media print { .steps { page-break-inside: avoid; } }
+</style>
+</head>
+<body>
+
+<h1>🌸 Bloom Builder — Image Filename Reference</h1>
+<p>Keep this page open while you upload images to GitHub. Every image file must be named <em>exactly</em> as shown below.</p>
+
+<div class="steps">
+  <strong>Steps to replace any flower or ribbon image:</strong>
+  <ol>
+    <li>Prepare your image. PNG or JPG, ideally square, under 500 kb. Free resizer: <strong>squoosh.app</strong></li>
+    <li>Rename the file to exactly match the <strong>Filename</strong> column below (including the <code>.png</code> or <code>.jpg</code> extension).</li>
+    <li>Go to your GitHub repository → open (or create) the <code>images</code> folder → click <strong>Add file → Upload files</strong> → drag your renamed file in → click <strong>Commit changes</strong>.</li>
+    <li>Open <code>data.js</code> in GitHub → click the <strong>pencil (edit) icon</strong> → find the flower by name → add this line right after its <code>"origin"</code> line:<br>
+      <code style="display:block;margin:.4rem 0;">&nbsp;&nbsp;&nbsp;&nbsp;imgUrl: "images/rose-red.png",</code>
+      (replace <code>rose-red.png</code> with your actual filename) → click <strong>Commit changes</strong>.
+    </li>
+    <li>Wait about 60 seconds → refresh the website. Your image is live for everyone.</li>
+  </ol>
+  <p class="tip" style="margin-top:.7rem;">To go back to the pencil drawing at any time: delete the <code>imgUrl</code> line in <code>data.js</code> and commit.</p>
+</div>
+
+<h2>🌸 Flowers</h2>
+<table>
+  <tr><th>Flower name</th><th>Filename to use</th></tr>
+  <tr><td>Red Rose</td>        <td class="filename">rose-red.png</td></tr>
+  <tr><td>Yellow Rose</td>     <td class="filename">rose-yellow.png</td></tr>
+  <tr><td>Peony</td>           <td class="filename">peony.png</td></tr>
+  <tr><td>Lavender</td>        <td class="filename">lavender.png</td></tr>
+  <tr><td>White Lily</td>      <td class="filename">lily-white.png</td></tr>
+  <tr><td>Forget-Me-Not</td>   <td class="filename">forget-me-not.png</td></tr>
+  <tr><td>Red Tulip</td>       <td class="filename">tulip-red.png</td></tr>
+  <tr><td>Purple Tulip</td>    <td class="filename">tulip-purple.png</td></tr>
+  <tr><td>Daisy</td>           <td class="filename">daisy.png</td></tr>
+  <tr><td>Sunflower</td>       <td class="filename">sunflower.png</td></tr>
+  <tr><td>Cherry Blossom</td>  <td class="filename">cherry-blossom.png</td></tr>
+  <tr><td>Blue Iris</td>       <td class="filename">iris.png</td></tr>
+  <tr><td>Pink Carnation</td>  <td class="filename">carnation-pink.png</td></tr>
+  <tr><td>Magnolia</td>        <td class="filename">magnolia.png</td></tr>
+  <tr><td>Red Poppy</td>       <td class="filename">poppy-red.png</td></tr>
+  <tr><td>Chrysanthemum</td>   <td class="filename">chrysanthemum.png</td></tr>
+</table>
+<p class="tip">JPG also works — just use <code>.jpg</code> instead of <code>.png</code> in both the filename and the imgUrl line.</p>
+
+<h2>🎀 Ribbons &amp; Wraps</h2>
+<table>
+  <tr><th>Item name</th><th>Filename to use</th></tr>
+  <tr><td>Red Ribbon</td>      <td class="filename">ribbon-red.png</td></tr>
+  <tr><td>Simple Bow</td>      <td class="filename">ribbon-simple.png</td></tr>
+  <tr><td>Double Bow</td>      <td class="filename">ribbon-double.png</td></tr>
+  <tr><td>Kraft Wrap</td>      <td class="filename">wrap-kraft.png</td></tr>
+  <tr><td>Newsprint Wrap</td>  <td class="filename">wrap-newsprint.png</td></tr>
+  <tr><td>White Wrap</td>      <td class="filename">wrap-white.png</td></tr>
+</table>
+
+<h2>📁 What your GitHub repository should look like</h2>
+<pre style="background:#f7f4ef;border:1px solid #ccc;padding:.8rem;font-size:.82rem;line-height:1.8;">
+your-repo/
+├── index.html
+├── theme.css
+├── data.js
+└── images/
+    ├── rose-red.png
+    ├── peony.jpg
+    ├── lavender.png
+    └── ... (only the ones you've uploaded)
+</pre>
+<p class="tip">You don't need to upload all of them — only upload images for the flowers you want to replace. Everything else continues showing its pencil drawing.</p>
+
+</body>
+</html>

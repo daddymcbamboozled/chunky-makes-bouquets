@@ -236,9 +236,31 @@ function makeTile(data, category) {
   tile.draggable = true;
   tile.dataset.id = data.id;
 
-  const media = data.imgUrl
-    ? `<img src="${data.imgUrl}" style="width:46px;height:46px;object-fit:contain;display:block;margin:0 auto 3px;" alt="${data.name}">`
-    : (data.svg || '');
+  // Build tile: show imgUrl if provided, fall back to SVG on error or if absent
+  let media;
+  if (data.imgUrl) {
+    const svgEl = document.createElement('span');
+    svgEl.style.display = 'none';
+    svgEl.innerHTML = data.svg || '';
+    const svgChild = svgEl.querySelector('svg');
+    if (svgChild) { svgChild.setAttribute('width','46'); svgChild.setAttribute('height','46'); }
+
+    const img = document.createElement('img');
+    img.src = data.imgUrl;
+    img.alt = data.name;
+    img.style.cssText = 'width:46px;height:46px;object-fit:contain;display:block;margin:0 auto 3px;';
+    img.addEventListener('error', () => {
+      img.style.display = 'none';
+      svgEl.style.display = 'block';
+    });
+
+    const wrap = document.createElement('span');
+    wrap.appendChild(img);
+    if (data.svg) wrap.appendChild(svgEl);
+    media = wrap.innerHTML;
+  } else {
+    media = data.svg || '';
+  }
 
   tile.innerHTML = media + `<div class="tile-fname">${data.name}</div>`;
 
@@ -314,13 +336,16 @@ function setItemContent(el, rec) {
   const resizeH    = el.querySelector('.resize-handle');
   const rotateH    = el.querySelector('.rotate-handle');
   if (rec.data.imgUrl) {
+    const svg = rec.data.svg || '';
     el.innerHTML = `<img src="${rec.data.imgUrl}"
       style="width:${rec.size}px;height:${rec.size}px;object-fit:contain;display:block;pointer-events:none;"
-      alt="${rec.data.name}">`;
+      alt="${rec.data.name}"
+      onerror="this.style.display='none'; const s=this.parentNode.querySelector('.__svgfb'); if(s){s.style.display='block';}"
+    ><span class="__svgfb" style="display:none">${svg}</span>`;
   } else {
     el.innerHTML = rec.data.svg || '';
-    const svg = el.querySelector('svg');
-    if(svg){ svg.setAttribute('width',rec.size); svg.setAttribute('height',rec.size); }
+    const svgEl = el.querySelector('svg');
+    if(svgEl){ svgEl.setAttribute('width',rec.size); svgEl.setAttribute('height',rec.size); svgEl.style.pointerEvents='none'; }
   }
   if(ring)    el.appendChild(ring);
   if(resizeH) el.appendChild(resizeH);
