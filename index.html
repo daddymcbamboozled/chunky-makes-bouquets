@@ -206,6 +206,15 @@ window.addEventListener('resize', initLayout);
 // ─────────────────────────────────────────
 //  HELPERS
 // ─────────────────────────────────────────
+// Derives the image path from the item's id.
+// If a file called images/<id>.png exists in the repo, it will be used automatically.
+// If not, the img onerror handler silently falls back to the SVG drawing.
+// For custom uploads (base64 data URLs), use the imgUrl directly.
+function imageUrl(data) {
+  if (data.imgUrl && data.imgUrl.startsWith('data:')) return data.imgUrl; // custom upload
+  return 'images/' + data.id + '.png';
+}
+
 function getAllData() { return [...FLOWERS, ...RIBBONS, ...customItems]; }
 function getEl(uuid)  { return canvas.querySelector(`[data-uuid="${uuid}"]`); }
 function uid()        { return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)+Date.now().toString(36); }
@@ -236,31 +245,27 @@ function makeTile(data, category) {
   tile.draggable = true;
   tile.dataset.id = data.id;
 
-  // Build tile: show imgUrl if provided, fall back to SVG on error or if absent
-  let media;
-  if (data.imgUrl) {
-    const svgEl = document.createElement('span');
-    svgEl.style.display = 'none';
-    svgEl.innerHTML = data.svg || '';
-    const svgChild = svgEl.querySelector('svg');
-    if (svgChild) { svgChild.setAttribute('width','46'); svgChild.setAttribute('height','46'); }
+  // Always try images/<id>.png first; silently fall back to SVG if file not found
+  const imgSrc = imageUrl(data);
+  const svgFb  = document.createElement('span');
+  svgFb.innerHTML = data.svg || '';
+  const svgChild = svgFb.querySelector('svg');
+  if (svgChild) { svgChild.setAttribute('width','46'); svgChild.setAttribute('height','46'); }
 
-    const img = document.createElement('img');
-    img.src = data.imgUrl;
-    img.alt = data.name;
-    img.style.cssText = 'width:46px;height:46px;object-fit:contain;display:block;margin:0 auto 3px;';
-    img.addEventListener('error', () => {
-      img.style.display = 'none';
-      svgEl.style.display = 'block';
-    });
+  const img = document.createElement('img');
+  img.src = imgSrc;
+  img.alt = data.name;
+  img.style.cssText = 'width:46px;height:46px;object-fit:contain;display:block;margin:0 auto 3px;';
+  img.addEventListener('error', () => {
+    img.style.display = 'none';
+    svgFb.style.display = 'block';
+  });
+  img.addEventListener('load', () => { svgFb.style.display = 'none'; });
 
-    const wrap = document.createElement('span');
-    wrap.appendChild(img);
-    if (data.svg) wrap.appendChild(svgEl);
-    media = wrap.innerHTML;
-  } else {
-    media = data.svg || '';
-  }
+  const wrap = document.createElement('span');
+  wrap.appendChild(img);
+  if (data.svg) wrap.appendChild(svgFb);
+  const media = wrap.innerHTML;
 
   tile.innerHTML = media + `<div class="tile-fname">${data.name}</div>`;
 
@@ -335,18 +340,25 @@ function setItemContent(el, rec) {
   const ring       = el.querySelector('.selected-ring');
   const resizeH    = el.querySelector('.resize-handle');
   const rotateH    = el.querySelector('.rotate-handle');
-  if (rec.data.imgUrl) {
-    const svg = rec.data.svg || '';
-    el.innerHTML = `<img src="${rec.data.imgUrl}"
-      style="width:${rec.size}px;height:${rec.size}px;object-fit:contain;display:block;pointer-events:none;"
-      alt="${rec.data.name}"
-      onerror="this.style.display='none'; const s=this.parentNode.querySelector('.__svgfb'); if(s){s.style.display='block';}"
-    ><span class="__svgfb" style="display:none">${svg}</span>`;
-  } else {
-    el.innerHTML = rec.data.svg || '';
-    const svgEl = el.querySelector('svg');
-    if(svgEl){ svgEl.setAttribute('width',rec.size); svgEl.setAttribute('height',rec.size); svgEl.style.pointerEvents='none'; }
-  }
+  // Always try images/<id>.png; fall back to SVG if not found
+  const imgSrc = imageUrl(rec.data);
+  const svg    = rec.data.svg || '';
+  const sz     = rec.size;
+  el.innerHTML = `<img src="${imgSrc}"
+    style="width:${sz}px;height:${sz}px;object-fit:contain;display:block;pointer-events:none;"
+    alt="${rec.data.name}"
+  ><span class="__svgfb" style="display:none">${svg}</span>`;
+  const imgEl  = el.querySelector('img');
+  const svgFb  = el.querySelector('.__svgfb');
+  imgEl.addEventListener('error', () => {
+    imgEl.style.display = 'none';
+    if (svgFb) {
+      svgFb.style.display = 'block';
+      const svgEl = svgFb.querySelector('svg');
+      if (svgEl) { svgEl.setAttribute('width', sz); svgEl.setAttribute('height', sz); svgEl.style.pointerEvents = 'none'; }
+    }
+  });
+  imgEl.addEventListener('load', () => { if (svgFb) svgFb.style.display = 'none'; });
   if(ring)    el.appendChild(ring);
   if(resizeH) el.appendChild(resizeH);
   if(rotateH) el.appendChild(rotateH);
@@ -707,9 +719,15 @@ function openEditModal(mode, dataId) {
       document.getElementById('edit-drop-hint').textContent= 'Click to change image';
       pendingB64 = data.imgUrl;
       showB64Export(data.imgUrl);
-    } else if(data.svg){
-      // Render SVG as tiny preview
-      document.getElementById('edit-drop-hint').textContent = 'Uses built-in SVG — upload to replace';
+    } else {
+      // Show the auto-derived image path as preview; falls back gracefully if file not there
+      const autoSrc = imageUrl(data);
+      const prevImg = document.getElementById('edit-preview');
+      prevImg.src = autoSrc;
+      prevImg.style.display = 'block';
+      prevImg.onerror = () => { prevImg.style.display = 'none'; };
+      document.getElementById('edit-drop-hint').textContent =
+        data.svg ? 'Uses pencil drawing — upload image to replace' : 'Click or drop image here';
     }
   } else {
     // Add mode — pre-fill category from sidebar dropdown
@@ -894,9 +912,8 @@ function openCardModal(){
 
   document.getElementById('card-body').innerHTML = unique.map(i=>{
     const d=i.data, n=counts[d.id];
-    let icon = d.imgUrl
-      ? `<img src="${d.imgUrl}" style="width:30px;height:30px;object-fit:contain;" alt="${d.name}">`
-      : (d.svg ? d.svg.replace(/width="\d+" height="\d+"/g,'width="30" height="30"') : '✿');
+    let icon = `<img src="${imageUrl(d)}" style="width:30px;height:30px;object-fit:contain;" alt="${d.name}"
+      onerror="this.style.display='none';this.insertAdjacentHTML('afterend',${JSON.stringify(d.svg ? d.svg.replace(/width="\d+" height="\d+"/g,'width="30" height="30"') : '✿')})">`;
     const short = d.meaning ? d.meaning.slice(0,140)+(d.meaning.length>140?'…':'') : 'A personal addition.';
     return `<div class="card-flower-row">
       <div class="card-flower-icon">${icon}</div>
