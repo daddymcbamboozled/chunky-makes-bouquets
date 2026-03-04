@@ -3,16 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bloom Builder — Make a Bouquet</title>
+<title>Chunky's Bouquets</title>
 <link rel="stylesheet" href="theme.css">
+<style>
+  /* ── SNIGDHA TOGGLE ── */
+  .toggle-switch {
+    width: 34px; height: 18px;
+    background: var(--ink-faint);
+    border: 2px solid var(--ink);
+    position: relative; cursor: pointer;
+    transition: background .2s;
+    flex-shrink: 0;
+  }
+  .toggle-switch.on { background: var(--accent); border-color: var(--accent-dark); }
+  .toggle-knob {
+    position: absolute; top: 1px; left: 1px;
+    width: 12px; height: 12px;
+    background: var(--white); border: 1.5px solid var(--ink);
+    transition: left .2s;
+  }
+  .toggle-switch.on .toggle-knob { left: 17px; }
+
+  /* ── RIGHT-CLICK CONTEXT MENU ── */
+  #ctx-menu {
+    display: none; position: fixed; z-index: 999;
+    background: var(--white); border: var(--border);
+    box-shadow: var(--shadow-md);
+    min-width: 140px;
+    font-family: var(--font-body);
+  }
+  #ctx-menu.open { display: block; }
+  .ctx-item {
+    padding: .4rem .85rem; cursor: pointer; font-size: .85rem;
+    display: flex; align-items: center; gap: .5rem;
+    border-bottom: 1px solid var(--ink-faint);
+    transition: background .08s;
+  }
+  .ctx-item:last-child { border-bottom: none; }
+  .ctx-item:hover { background: var(--accent-bg); }
+  .ctx-item.danger:hover { background: #fff0f0; color: var(--accent); }
+  .ctx-item .ctx-key {
+    margin-left: auto; font-size: .62rem;
+    color: var(--ink-faint); font-family: var(--font-label);
+    letter-spacing: .04em;
+  }
+
+  /* ── KEYBOARD SHORTCUT HINT ── */
+  .shortcut-hint {
+    position: absolute; bottom: 6px; right: 8px;
+    font-family: var(--font-label); font-size: .58rem;
+    color: var(--ink-faint); letter-spacing: .04em;
+    pointer-events: none; z-index: 3; line-height: 1.6;
+    text-align: right;
+  }
+</style>
 </head>
 <body>
 
 <!-- ═══════════ HEADER ═══════════ -->
 <header id="app-header">
-  <div class="header-stamp">✿</div>
+  <!-- Logo: shows images/logo.png if uploaded, otherwise the stamp -->
+  <div class="header-stamp" id="header-logo-wrap">
+    <img id="header-logo-img" src="images/logo.png" alt="Logo"
+      style="width:100%;height:100%;object-fit:contain;border-radius:50%;display:block;"
+      onerror="this.style.display='none';document.getElementById('header-logo-fallback').style.display='flex';">
+    <span id="header-logo-fallback" style="display:none;align-items:center;justify-content:center;width:100%;height:100%;">✿</span>
+  </div>
   <div class="header-text">
-    <h1><span class="accent">Bloom</span> Builder</h1>
+    <h1><span class="accent">Chunky's</span> Bouquets</h1>
     <p>mix flowers · learn their meanings · share the bouquet</p>
   </div>
   <div class="header-tape"></div>
@@ -25,6 +83,18 @@
   <aside class="panel" id="left-panel">
     <div class="panel-title">✂ The Stash</div>
     <div class="panel-inner">
+
+      <!-- Snigdha toggle — hidden by default, revealed by the toggle -->
+      <div id="snigdha-toggle-row" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding:5px 7px;background:var(--accent-bg);border:1px dashed var(--accent);">
+        <span style="font-family:var(--font-body);font-size:0.72rem;color:var(--accent);">🌸 secret flower</span>
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+          <span style="font-family:var(--font-label);font-size:0.6rem;color:var(--ink-light);text-transform:uppercase;letter-spacing:.06em;">show</span>
+          <div class="toggle-switch" id="snigdha-toggle" onclick="toggleSnigdha()" title="Reveal Snigdha">
+            <div class="toggle-knob"></div>
+          </div>
+        </label>
+      </div>
+
       <div class="section-label">Flowers</div>
       <div class="flower-grid" id="flower-palette"></div>
 
@@ -32,7 +102,6 @@
       <div class="flower-grid" id="ribbon-palette"></div>
 
       <div class="section-label">Add Custom</div>
-      <!-- New item: choose category -->
       <div style="display:flex;gap:5px;margin-bottom:6px;">
         <select id="new-item-category" style="flex:1;font-family:var(--font-body);font-size:0.75rem;border:var(--border);padding:3px 5px;background:var(--bg);color:var(--ink);outline:none;">
           <option value="flower">Flower</option>
@@ -44,7 +113,15 @@
         <p>Drop PNG / JPG / SVG<br>or click to browse</p>
       </div>
       <input type="file" id="file-input" accept="image/png,image/jpeg,image/svg+xml" multiple style="display:none">
-      <p class="upload-note">Uploads are session-only unless you embed them in data.js — see the export button in the editor.</p>
+
+      <div class="section-label" style="margin-top:1rem;">Canvas Background</div>
+      <div class="upload-zone" id="bg-upload-trigger" style="margin-top:0;">
+        <span class="upload-icon">🖼</span>
+        <p>Upload paper texture<br>or background image</p>
+      </div>
+      <button class="btn btn-sm" onclick="clearBackground()" style="width:100%;margin-top:5px;font-size:0.65rem;">✕ Remove background</button>
+      <input type="file" id="bg-file-input" accept="image/png,image/jpeg,image/svg+xml,image/webp" style="display:none">
+
     </div>
   </aside>
 
@@ -61,13 +138,15 @@
         <span class="big-icon">✎</span>
         <span>Click a flower on the left,<br>or drag it onto the canvas.</span>
       </div>
+      <div class="shortcut-hint">D duplicate · Del delete<br>[ ] layer · arrows nudge · Shift+arrows fast</div>
     </div>
 
     <div class="canvas-actions">
+      <button class="btn btn-sm" onclick="duplicateSelected()" title="Duplicate (D)">⧉ Duplicate</button>
       <button class="btn btn-sm" onclick="deleteSelected()" title="Delete (Del)">🗑 Delete</button>
       <button class="btn btn-sm" onclick="clearCanvas()">Clear All</button>
-      <button class="btn btn-sm" onclick="bringForward()" title="[ ]">↑ Forward</button>
-      <button class="btn btn-sm" onclick="sendBack()">↓ Back</button>
+      <button class="btn btn-sm" onclick="bringForward()" title="Forward (])">↑ Forward</button>
+      <button class="btn btn-sm" onclick="sendBack()" title="Back ([)">↓ Back</button>
       <button class="btn btn-sm btn-red" onclick="saveCanvasImage()">💾 Save Image</button>
       <div class="selected-info">Selected: <span id="selected-label">none</span></div>
     </div>
@@ -83,6 +162,14 @@
 
 </div><!-- /app-layout -->
 
+
+<!-- ═══════════ CONTEXT MENU ═══════════ -->
+<div id="ctx-menu">
+  <div class="ctx-item" onclick="ctxDuplicate()">⧉ Duplicate <span class="ctx-key">D</span></div>
+  <div class="ctx-item" onclick="bringForward()">↑ Bring Forward <span class="ctx-key">]</span></div>
+  <div class="ctx-item" onclick="sendBack()">↓ Send Back <span class="ctx-key">[</span></div>
+  <div class="ctx-item danger" onclick="ctxDelete()">🗑 Delete <span class="ctx-key">Del</span></div>
+</div>
 
 <!-- ═══════════ EDIT / ADD ITEM MODAL ═══════════ -->
 <div class="modal-overlay" id="edit-modal" role="dialog" aria-modal="true">
@@ -172,6 +259,31 @@
 <!-- ═══════════ APP LOGIC ═══════════ -->
 <script>
 // ─────────────────────────────────────────
+//  SNIGDHA — secret flower, toggle-revealed
+// ─────────────────────────────────────────
+const SNIGDHA = {
+  id: 'snigdha',
+  name: 'Snigdha',
+  tags: ['love'],
+  meaning: 'The prettiest flower of them all :)',
+  origin: 'Hailing from the lands of Guntur, raised across oceans in Vienna, trudging back through the cities of Vijayawada and Hyderabad, before finally settling in my eyes \u2764\ufe0f',
+  svg: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(40,44)">
+      <path d="M0,4 Q-2,14 -1,28" stroke="#333" stroke-width="2" fill="none"/>
+      <ellipse cx="-8" cy="-8" rx="10" ry="14" fill="#ffd6e0" stroke="#e88" stroke-width="1" transform="rotate(-30,-8,-8)"/>
+      <ellipse cx="8" cy="-8" rx="10" ry="14" fill="#ffd6e0" stroke="#e88" stroke-width="1" transform="rotate(30,8,-8)"/>
+      <ellipse cx="0" cy="-18" rx="10" ry="14" fill="#ffb3c6" stroke="#e88" stroke-width="1"/>
+      <ellipse cx="-14" cy="-2" rx="8" ry="12" fill="#ffd6e0" stroke="#e88" stroke-width="1" transform="rotate(-80,-14,-2)"/>
+      <ellipse cx="14" cy="-2" rx="8" ry="12" fill="#ffd6e0" stroke="#e88" stroke-width="1" transform="rotate(80,14,-2)"/>
+      <circle cx="0" cy="-8" r="7" fill="#ff6b9d"/>
+      <circle cx="0" cy="-8" r="3.5" fill="#fff0f5"/>
+    </g>
+  </svg>`
+};
+
+let snigdhaVisible = false;
+
+// ─────────────────────────────────────────
 //  STATE
 // ─────────────────────────────────────────
 let items        = [];       // placed items on canvas
@@ -215,7 +327,7 @@ function imageUrl(data) {
   return 'images/' + data.id + '.png';
 }
 
-function getAllData() { return [...FLOWERS, ...RIBBONS, ...customItems]; }
+function getAllData() { return [...FLOWERS, ...(snigdhaVisible ? [SNIGDHA] : []), ...RIBBONS, ...customItems]; }
 function getEl(uuid)  { return canvas.querySelector(`[data-uuid="${uuid}"]`); }
 function uid()        { return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)+Date.now().toString(36); }
 function fileToLabel(n){ return n.replace(/\.[^.]+$/,'').replace(/[-_]/g,' '); }
@@ -245,22 +357,20 @@ function makeTile(data, category) {
   tile.draggable = true;
   tile.dataset.id = data.id;
 
-  // Always try images/<id>.png first; silently fall back to SVG if file not found
+  // Always try images/<id>.png — SVG fallback starts hidden, only shown on load error
   const imgSrc = imageUrl(data);
-  const svgFb  = document.createElement('span');
+
+  const svgFb = document.createElement('span');
+  svgFb.style.display = 'none';          // hidden until image fails
   svgFb.innerHTML = data.svg || '';
   const svgChild = svgFb.querySelector('svg');
   if (svgChild) { svgChild.setAttribute('width','46'); svgChild.setAttribute('height','46'); }
 
   const img = document.createElement('img');
-  img.src = imgSrc;
   img.alt = data.name;
   img.style.cssText = 'width:46px;height:46px;object-fit:contain;display:block;margin:0 auto 3px;';
-  img.addEventListener('error', () => {
-    img.style.display = 'none';
-    svgFb.style.display = 'block';
-  });
-  img.addEventListener('load', () => { svgFb.style.display = 'none'; });
+  img.addEventListener('error', () => { img.style.display='none'; svgFb.style.display='block'; });
+  img.src = imgSrc;   // set src AFTER attaching error listener
 
   const wrap = document.createElement('span');
   wrap.appendChild(img);
@@ -340,25 +450,25 @@ function setItemContent(el, rec) {
   const ring       = el.querySelector('.selected-ring');
   const resizeH    = el.querySelector('.resize-handle');
   const rotateH    = el.querySelector('.rotate-handle');
-  // Always try images/<id>.png; fall back to SVG if not found
+  // Always try images/<id>.png; SVG hidden by default, shown only on error
   const imgSrc = imageUrl(rec.data);
   const svg    = rec.data.svg || '';
   const sz     = rec.size;
-  el.innerHTML = `<img src="${imgSrc}"
+  el.innerHTML = `<img
     style="width:${sz}px;height:${sz}px;object-fit:contain;display:block;pointer-events:none;"
     alt="${rec.data.name}"
   ><span class="__svgfb" style="display:none">${svg}</span>`;
-  const imgEl  = el.querySelector('img');
-  const svgFb  = el.querySelector('.__svgfb');
+  const imgEl = el.querySelector('img');
+  const svgFb = el.querySelector('.__svgfb');
   imgEl.addEventListener('error', () => {
     imgEl.style.display = 'none';
     if (svgFb) {
       svgFb.style.display = 'block';
       const svgEl = svgFb.querySelector('svg');
-      if (svgEl) { svgEl.setAttribute('width', sz); svgEl.setAttribute('height', sz); svgEl.style.pointerEvents = 'none'; }
+      if (svgEl) { svgEl.setAttribute('width',sz); svgEl.setAttribute('height',sz); svgEl.style.pointerEvents='none'; }
     }
   });
-  imgEl.addEventListener('load', () => { if (svgFb) svgFb.style.display = 'none'; });
+  imgEl.src = imgSrc;  // set AFTER attaching listener
   if(ring)    el.appendChild(ring);
   if(resizeH) el.appendChild(resizeH);
   if(rotateH) el.appendChild(rotateH);
@@ -634,19 +744,116 @@ function sendBack() {
 }
 
 // ─────────────────────────────────────────
+//  SNIGDHA TOGGLE
+// ─────────────────────────────────────────
+function toggleSnigdha() {
+  snigdhaVisible = !snigdhaVisible;
+  const toggle = document.getElementById('snigdha-toggle');
+  toggle.classList.toggle('on', snigdhaVisible);
+
+  const palette = document.getElementById('flower-palette');
+  const existing = palette.querySelector('[data-id="snigdha"]');
+
+  if (snigdhaVisible && !existing) {
+    // Insert Snigdha tile at the top of the flower palette
+    const tile = makeTile(SNIGDHA, 'flower');
+    palette.insertBefore(tile, palette.firstChild);
+  } else if (!snigdhaVisible && existing) {
+    existing.remove();
+  }
+}
+
+// ─────────────────────────────────────────
+//  DUPLICATE
+// ─────────────────────────────────────────
+function duplicateSelected() {
+  if(!selectedUUID) return;
+  const rec = items.find(i=>i.uuid===selectedUUID);
+  if(!rec) return;
+  // Place copy slightly offset so it's visible
+  const newRec = {
+    uuid: uid(),
+    data: rec.data,
+    x: rec.x + 18,
+    y: rec.y + 18,
+    size: rec.size,
+    rotation: rec.rotation,
+    zIndex: ++maxZ
+  };
+  items.push(newRec);
+  renderItem(newRec);
+  selectItem(newRec.uuid);
+  updateMeanings();
+}
+
+// ─────────────────────────────────────────
+//  CONTEXT MENU
+// ─────────────────────────────────────────
+const ctxMenu = document.getElementById('ctx-menu');
+
+canvas.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  // Only show if an item is right-clicked
+  const item = e.target.closest('.placed-item');
+  if(!item) { closeCtxMenu(); return; }
+  selectItem(item.dataset.uuid);
+  ctxMenu.style.left = e.clientX + 'px';
+  ctxMenu.style.top  = e.clientY + 'px';
+  ctxMenu.classList.add('open');
+});
+
+document.addEventListener('click',   () => closeCtxMenu());
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeCtxMenu(); });
+
+function closeCtxMenu() { ctxMenu.classList.remove('open'); }
+function ctxDuplicate() { closeCtxMenu(); duplicateSelected(); }
+function ctxDelete()    { closeCtxMenu(); deleteSelected(); }
+
+// ─────────────────────────────────────────
+//  CANVAS BACKGROUND
+// ─────────────────────────────────────────
+function applyBackground(url) {
+  canvas.style.backgroundImage  = `url(${CSS.escape ? url : url})`; // url() handles data URLs fine
+  canvas.style.backgroundSize   = 'cover';
+  canvas.style.backgroundRepeat = 'no-repeat';
+  canvas.style.backgroundPosition = 'center';
+}
+
+function clearBackground() {
+  canvas.style.backgroundImage = '';
+  // restore notebook lines via CSS (they come from ::after pseudo)
+}
+
+document.getElementById('bg-upload-trigger').addEventListener('click', () => {
+  document.getElementById('bg-file-input').click();
+});
+document.getElementById('bg-upload-trigger').addEventListener('dragover', e => e.preventDefault());
+document.getElementById('bg-upload-trigger').addEventListener('drop', e => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if(file) readFile(file, applyBackground);
+});
+document.getElementById('bg-file-input').addEventListener('change', e => {
+  if(!e.target.files[0]) return;
+  readFile(e.target.files[0], applyBackground);
+  e.target.value = '';
+});
+
+// ─────────────────────────────────────────
 //  KEYBOARD
 // ─────────────────────────────────────────
 document.addEventListener('keydown', e => {
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT') return;
   if((e.key==='Delete'||e.key==='Backspace')&&selectedUUID){ e.preventDefault(); deleteSelected(); }
+  if(e.key==='d'||e.key==='D'){ e.preventDefault(); duplicateSelected(); }
   const step = e.shiftKey ? 10 : 1;
   if(e.key==='ArrowLeft')  { e.preventDefault(); nudge(-step,0); }
   if(e.key==='ArrowRight') { e.preventDefault(); nudge( step,0); }
   if(e.key==='ArrowUp')    { e.preventDefault(); nudge(0,-step); }
   if(e.key==='ArrowDown')  { e.preventDefault(); nudge(0, step); }
-  if(e.key==='['){ e.preventDefault(); rotateDelta(-5); }
-  if(e.key===']'){ e.preventDefault(); rotateDelta( 5); }
-  if(e.key==='Escape'){ closeEditModal(); closeCardModal(); }
+  if(e.key==='['){ e.preventDefault(); sendBack(); }
+  if(e.key===']'){ e.preventDefault(); bringForward(); }
+  if(e.key==='Escape'){ closeEditModal(); closeCardModal(); closeCtxMenu(); }
 });
 
 function nudge(dx,dy){

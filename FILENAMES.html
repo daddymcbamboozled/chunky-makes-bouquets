@@ -60,6 +60,7 @@
   <tr><td>Magnolia</td>        <td class="filename">magnolia.png</td></tr>
   <tr><td>Red Poppy</td>       <td class="filename">poppy-red.png</td></tr>
   <tr><td>Chrysanthemum</td>   <td class="filename">chrysanthemum.png</td></tr>
+  <tr style="background:#fff0f5;"><td>Snigdha 🌸 <em style="font-size:.8em;color:#888;">(secret)</em></td> <td class="filename">snigdha.png</td></tr>
 </table>
 <p class="tip">JPG also works — just use <code>.jpg</code> instead of <code>.png</code> in both the filename and the imgUrl line.</p>
 
@@ -80,13 +81,17 @@ your-repo/
 ├── index.html
 ├── theme.css
 ├── data.js
+├── FILENAMES.html
 └── images/
+    ├── logo.png          ← your logo (shows in top-left header)
+    ├── background.png    ← canvas paper texture (optional)
+    ├── snigdha.png       ← the secret flower photo
     ├── rose-red.png
-    ├── peony.jpg
-    ├── lavender.png
-    └── ... (only the ones you've uploaded)
+    └── ... (only upload the ones you want to replace)
 </pre>
-<p class="tip">You don't need to upload all of them — only upload images for the flowers you want to replace. Everything else continues showing its pencil drawing.</p>
+<p><strong>Logo:</strong> name it exactly <code>logo.png</code> and upload to the <code>images/</code> folder. It appears in the top-left corner of the header automatically.</p>
+<p style="margin-top:.5rem;"><strong>Background:</strong> you can upload any image from the left panel of the website directly — it applies immediately to the canvas for that session. For a permanent background, name it <code>background.png</code> and upload to <code>images/</code>, then add one line to <code>index.html</code>'s canvas style. (Or just use the in-app upload each time you open it.)</p>
+<p class="tip" style="margin-top:.5rem;">You don't need to upload all flower images — only upload the ones you want to replace. Everything else shows its pencil drawing.</p>
 
 </body>
 </html>
