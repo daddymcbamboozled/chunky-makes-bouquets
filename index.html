@@ -71,7 +71,7 @@
   </div>
   <div class="header-text">
     <h1><span class="accent">Chunky's</span> Bouquets</h1>
-    <p>silly flowers for silly people</p>
+    <p>mix flowers · learn their meanings · share the bouquet</p>
   </div>
   <div class="header-tape"></div>
 </header>
@@ -138,11 +138,13 @@
         <span class="big-icon">✎</span>
         <span>Click a flower on the left,<br>or drag it onto the canvas.</span>
       </div>
-      <div class="shortcut-hint">D duplicate · Del delete<br>[ ] layer · arrows nudge · Shift+arrows fast</div>
+      <div class="shortcut-hint">D dup · H flip↔ · V flip↕ · Del delete<br>[ ] layer · arrows nudge · Shift+arrows fast</div>
     </div>
 
     <div class="canvas-actions">
       <button class="btn btn-sm" onclick="duplicateSelected()" title="Duplicate (D)">⧉ Duplicate</button>
+      <button class="btn btn-sm" onclick="flipSelected('x')" title="Flip horizontal (H)">↔ Flip H</button>
+      <button class="btn btn-sm" onclick="flipSelected('y')" title="Flip vertical (V)">↕ Flip V</button>
       <button class="btn btn-sm" onclick="deleteSelected()" title="Delete (Del)">🗑 Delete</button>
       <button class="btn btn-sm" onclick="clearCanvas()">Clear All</button>
       <button class="btn btn-sm" onclick="bringForward()" title="Forward (])">↑ Forward</button>
@@ -166,8 +168,10 @@
 <!-- ═══════════ CONTEXT MENU ═══════════ -->
 <div id="ctx-menu">
   <div class="ctx-item" onclick="ctxDuplicate()">⧉ Duplicate <span class="ctx-key">D</span></div>
-  <div class="ctx-item" onclick="bringForward()">↑ Bring Forward <span class="ctx-key">]</span></div>
-  <div class="ctx-item" onclick="sendBack()">↓ Send Back <span class="ctx-key">[</span></div>
+  <div class="ctx-item" onclick="flipSelected('x');closeCtxMenu()">↔ Flip Horizontal <span class="ctx-key">H</span></div>
+  <div class="ctx-item" onclick="flipSelected('y');closeCtxMenu()">↕ Flip Vertical <span class="ctx-key">V</span></div>
+  <div class="ctx-item" onclick="bringForward();closeCtxMenu()">↑ Bring Forward <span class="ctx-key">]</span></div>
+  <div class="ctx-item" onclick="sendBack();closeCtxMenu()">↓ Send Back <span class="ctx-key">[</span></div>
   <div class="ctx-item danger" onclick="ctxDelete()">🗑 Delete <span class="ctx-key">Del</span></div>
 </div>
 
@@ -406,7 +410,7 @@ function placeItem(data, x, y) {
     x = canvas.offsetWidth  / 2 - size/2 + (Math.random()-.5)*80;
     y = canvas.offsetHeight / 2 - size/2 + (Math.random()-.5)*80;
   }
-  const rec = { uuid: uid(), data, x, y, size, rotation: 0, zIndex: ++maxZ };
+  const rec = { uuid: uid(), data, x, y, size, rotation: 0, flipX: false, flipY: false, zIndex: ++maxZ };
   items.push(rec);
   renderItem(rec);
   selectItem(rec.uuid);
@@ -443,7 +447,9 @@ function applyItemStyle(el, rec) {
   el.style.width     = rec.size + 'px';
   el.style.height    = rec.size + 'px';
   el.style.zIndex    = rec.zIndex;
-  el.style.transform = `rotate(${rec.rotation}deg)`;
+  const sx = rec.flipX ? -1 : 1;
+  const sy = rec.flipY ? -1 : 1;
+  el.style.transform = `rotate(${rec.rotation}deg) scale(${sx},${sy})`;
 }
 
 function setItemContent(el, rec) {
@@ -770,7 +776,6 @@ function duplicateSelected() {
   if(!selectedUUID) return;
   const rec = items.find(i=>i.uuid===selectedUUID);
   if(!rec) return;
-  // Place copy slightly offset so it's visible
   const newRec = {
     uuid: uid(),
     data: rec.data,
@@ -778,12 +783,26 @@ function duplicateSelected() {
     y: rec.y + 18,
     size: rec.size,
     rotation: rec.rotation,
+    flipX: rec.flipX,
+    flipY: rec.flipY,
     zIndex: ++maxZ
   };
   items.push(newRec);
   renderItem(newRec);
   selectItem(newRec.uuid);
   updateMeanings();
+}
+
+// ─────────────────────────────────────────
+//  FLIP
+// ─────────────────────────────────────────
+function flipSelected(axis) {
+  if(!selectedUUID) return;
+  const rec = items.find(i=>i.uuid===selectedUUID);
+  if(!rec) return;
+  if(axis === 'x') rec.flipX = !rec.flipX;
+  if(axis === 'y') rec.flipY = !rec.flipY;
+  applyItemStyle(getEl(selectedUUID), rec);
 }
 
 // ─────────────────────────────────────────
@@ -846,6 +865,8 @@ document.addEventListener('keydown', e => {
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT') return;
   if((e.key==='Delete'||e.key==='Backspace')&&selectedUUID){ e.preventDefault(); deleteSelected(); }
   if(e.key==='d'||e.key==='D'){ e.preventDefault(); duplicateSelected(); }
+  if(e.key==='h'||e.key==='H'){ e.preventDefault(); flipSelected('x'); }
+  if(e.key==='v'||e.key==='V'){ e.preventDefault(); flipSelected('y'); }
   const step = e.shiftKey ? 10 : 1;
   if(e.key==='ArrowLeft')  { e.preventDefault(); nudge(-step,0); }
   if(e.key==='ArrowRight') { e.preventDefault(); nudge( step,0); }
