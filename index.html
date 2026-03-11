@@ -71,7 +71,7 @@
   </div>
   <div class="header-text">
     <h1><span class="accent">Chunky's</span> Bouquets</h1>
-    <p>silly flowers for silly people</p>
+    <p>mix flowers · learn their meanings · share the bouquet</p>
   </div>
   <div class="header-tape"></div>
 </header>
@@ -248,7 +248,7 @@
       <div class="card-subtitle">a handmade arrangement</div>
     </div>
     <div class="card-body" id="card-body"></div>
-    <div class="card-footer">made with bloom builder</div>
+    <div class="card-footer">made with Chunky's Bouquets</div>
     <div class="card-actions">
       <button class="btn btn-sm btn-red" onclick="saveCardImage()">💾 Save Card</button>
       <button class="btn btn-sm" onclick="closeCardModal()">Close</button>
@@ -1138,19 +1138,54 @@ function openCardModal(){
   const seen=new Set();
   const unique=items.filter(i=>{ if(seen.has(i.data.id)) return false; seen.add(i.data.id); return true; });
 
-  document.getElementById('card-body').innerHTML = unique.map(i=>{
-    const d=i.data, n=counts[d.id];
-    let icon = `<img src="${imageUrl(d)}" style="width:30px;height:30px;object-fit:contain;" alt="${d.name}"
-      onerror="this.style.display='none';this.insertAdjacentHTML('afterend',${JSON.stringify(d.svg ? d.svg.replace(/width="\d+" height="\d+"/g,'width="30" height="30"') : '✿')})">`;
+  const body = document.getElementById('card-body');
+  body.innerHTML = '';
+
+  unique.forEach(i => {
+    const d = i.data, n = counts[d.id];
+
+    // Icon: img with clean DOM fallback — no inline onerror that html2canvas misreads
+    const iconWrap = document.createElement('div');
+    iconWrap.className = 'card-flower-icon';
+    iconWrap.style.cssText = 'width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;';
+
+    // SVG fallback span — hidden by default, shown if img fails
+    const svgFb = document.createElement('span');
+    svgFb.style.display = 'none';
+    svgFb.style.lineHeight = '1';
+    if (d.svg) {
+      svgFb.innerHTML = d.svg;
+      const svgEl = svgFb.querySelector('svg');
+      if (svgEl) { svgEl.setAttribute('width','30'); svgEl.setAttribute('height','30'); }
+    } else {
+      svgFb.textContent = '✿';
+    }
+
+    const img = document.createElement('img');
+    img.alt  = d.name;
+    img.style.cssText = 'width:30px;height:30px;object-fit:contain;display:block;';
+    img.addEventListener('error', () => {
+      img.style.display = 'none';
+      svgFb.style.display = 'inline';
+    });
+    img.src = imageUrl(d); // set after listener
+
+    iconWrap.appendChild(img);
+    iconWrap.appendChild(svgFb);
+
     const short = d.meaning ? d.meaning.slice(0,140)+(d.meaning.length>140?'…':'') : 'A personal addition.';
-    return `<div class="card-flower-row">
-      <div class="card-flower-icon">${icon}</div>
-      <div class="card-flower-info">
-        <span class="name">${d.name}${n>1?`<span class="count">×${n}</span>`:''}</span>
-        <div class="meaning-short">${short}</div>
-      </div>
-    </div>`;
-  }).join('');
+    const countBadge = n > 1 ? `<span class="count">×${n}</span>` : '';
+
+    const info = document.createElement('div');
+    info.className = 'card-flower-info';
+    info.innerHTML = `<span class="name">${d.name}${countBadge}</span><div class="meaning-short">${short}</div>`;
+
+    const row = document.createElement('div');
+    row.className = 'card-flower-row';
+    row.appendChild(iconWrap);
+    row.appendChild(info);
+    body.appendChild(row);
+  });
 
   document.getElementById('card-modal').classList.add('open');
 }
@@ -1186,8 +1221,52 @@ function saveCanvasImage(){
 
 function saveCardImage(){
   loadH2C(()=>{
-    html2canvas(document.getElementById('card-inner'),{backgroundColor:'#ffffff',scale:2}).then(c=>{
-      dl(c,(document.getElementById('bouquet-name').value||'bouquet')+'-card.png');
+    const cardInner = document.getElementById('card-inner');
+
+    // Temporarily hide any SVG fallback spans that are still display:none —
+    // html2canvas sometimes renders them as stray characters. We make them
+    // visibility:hidden (takes no space, renders nothing) during capture only.
+    const svgFallbacks = cardInner.querySelectorAll('span[style*="display:none"], span[style*="display: none"]');
+    svgFallbacks.forEach(el => {
+      el.dataset.savedDisplay = el.style.display;
+      el.style.visibility = 'hidden';
+      el.style.display = 'none';
+    });
+
+    // Also hide card-actions buttons from the saved image
+    const actions = cardInner.querySelector('.card-actions');
+    const actionsDisplay = actions ? actions.style.display : null;
+    if(actions) actions.style.display = 'none';
+
+    // Wait one frame for layout to settle, then capture
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        html2canvas(cardInner, {
+          backgroundColor: '#ffffff',
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          // Tell html2canvas to ignore elements with this class
+          ignoreElements: el => el.classList && el.classList.contains('card-actions')
+        }).then(c => {
+          // Restore
+          svgFallbacks.forEach(el => {
+            el.style.display = el.dataset.savedDisplay || 'none';
+            delete el.dataset.savedDisplay;
+          });
+          if(actions && actionsDisplay !== null) actions.style.display = actionsDisplay;
+
+          dl(c, (document.getElementById('bouquet-name').value||'bouquet')+'-card.png');
+        }).catch(() => {
+          // Restore on error too
+          svgFallbacks.forEach(el => {
+            el.style.display = el.dataset.savedDisplay || 'none';
+            delete el.dataset.savedDisplay;
+          });
+          if(actions && actionsDisplay !== null) actions.style.display = actionsDisplay;
+          alert('Could not save card — try a screenshot instead.');
+        });
+      }, 120); // give images 120ms to finish loading
     });
   });
 }
